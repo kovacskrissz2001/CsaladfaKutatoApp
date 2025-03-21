@@ -20,46 +20,10 @@ namespace CsaladfaKutatoApp
         public MainWindow()
         {
             InitializeComponent();
+            // Itt töltjük be a kezdőoldalt (bejelentkezés)
+            MainFrame.Navigate(new BejelentkezesPage());
         }
 
-        private void Hyperlink_Bejelentkezes(object sender, RequestNavigateEventArgs e)
-        {
-
-        }
-
-        private void JelszoLathatosagValtas1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void JelszoLathatosagValtas2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PasswordBoxes_Valtozas(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PasswordBox_FokuszVesztes(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PasswordTextBox1_SzovegValtozas(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void PasswordTextBox2_SzovegValtozas(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void Regisztracio_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        
     }
 }
