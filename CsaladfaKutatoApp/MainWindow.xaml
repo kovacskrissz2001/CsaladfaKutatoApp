@@ -10,8 +10,8 @@
 
     <Viewbox Stretch="Uniform">
         <Frame x:Name="MainFrame"
-               Width="800"
-               Height="500"
+               Width="849"
+               Height="497"
                NavigationUIVisibility="Hidden" />
     </Viewbox>
 </controls:MetroWindow>
