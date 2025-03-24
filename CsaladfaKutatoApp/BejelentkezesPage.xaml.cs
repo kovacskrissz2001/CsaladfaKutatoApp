@@ -48,7 +48,7 @@ namespace CsaladfaKutatoApp
         {
             AzonositoHibaUzenet = "";
 
-            if (string.IsNullOrWhiteSpace(azonosito) /*|| string.IsNullOrWhiteSpace(jelszo)*/) //button aktiváláshoz
+            if (string.IsNullOrWhiteSpace(azonosito))
             {
                 return false;
             }
@@ -62,6 +62,7 @@ namespace CsaladfaKutatoApp
             if (!string.IsNullOrWhiteSpace(azonosito) && !emailMod && !FelhasznalonevVizsgalat(azonosito))
             {
                 AzonositoHibaUzenet = "A felhasználónév nem megfelelő!(3-20 karakter, betű, szám, _, .)";
+                return false;
             }
             return true;
         }
@@ -204,34 +205,7 @@ namespace CsaladfaKutatoApp
 
         private void BemenetiJelszoValtozas(object sender, RoutedEventArgs e)
         {
-            FrissitBejelentkezesGombAllapot();
-
-            if (!BejelenkezesiAdatokEllenorzese(azonosito, jelszo, emailMod, out string hiba))
-            {
-                HibaUzenet.Text = hiba;
-                return;
-            }
-
-            HibaUzenet.Text = "";
-
-
-            // További bejelentkezési logika
-        }
-
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Keyboard.ClearFocus();  // Törli a fókuszt minden vezérlőről
-            FocusManager.SetFocusedElement(this, (Grid)sender); // Átállítja a fókuszt a Grid-re
-        }
-
-        private void BemenetiSzovegValtozas(object sender, TextChangedEventArgs e)
-        {
-            FrissitBejelentkezesGombAllapot();
-        }
-
-        private void BemenetiJelszoValtozas(object sender, RoutedEventArgs e)
-        {
-            FrissitBejelentkezesGombAllapot();
-        }
+            FrissitBejelentkezesGombAllapot();       
+        }     
     }
 }
