@@ -10,7 +10,7 @@
 
     <Viewbox Stretch="Uniform">
         <Frame x:Name="MainFrame"
-               Width="849"
+               Width="906"
                Height="497"
                NavigationUIVisibility="Hidden" />
     </Viewbox>
