@@ -21,7 +21,9 @@ namespace CsaladfaKutatoApp
         {
             InitializeComponent();
             // Itt töltjük be a kezdőoldalt (bejelentkezés)
-            MainFrame.Navigate(new BejelentkezesPage());
+            //MainFrame.Navigate(new BejelentkezesPage());
+
+            MainFrame.Navigate(new ElsoCsaladtagHozzaadPage());
         }
 
         
