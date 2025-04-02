@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CsaladfaKutatoApp.Models;
 using MahApps.Metro.Controls;
 
 namespace CsaladfaKutatoApp
@@ -21,16 +22,18 @@ namespace CsaladfaKutatoApp
     /// </summary>
     public partial class ElsoCsaladtagHozzaadPage : Page
     {
-        public ElsoCsaladtagHozzaadPage()
+        private readonly CsaladfaAdatbazisContext _context;
+        public ElsoCsaladtagHozzaadPage(CsaladfaAdatbazisContext context)
         {
             InitializeComponent();
+            _context= context;
         }
 
         private void Regisztracio_Click(object sender, RoutedEventArgs e)
         {
 
             // A "MainWindow" Frame-jén keresztül navigálunk
-            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new RegisztracioPage());
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new RegisztracioPage(_context));
             e.Handled = true;
         }
     }

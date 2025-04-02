@@ -16,6 +16,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
+using CsaladfaKutatoApp.Models;
 
 
 namespace CsaladfaKutatoApp
@@ -25,9 +26,12 @@ namespace CsaladfaKutatoApp
     /// </summary>
     public partial class BejelentkezesPage : Page
     {
-        public BejelentkezesPage()
+        private readonly CsaladfaAdatbazisContext _context;
+
+        public BejelentkezesPage(CsaladfaAdatbazisContext context)
         {
             InitializeComponent();
+            _context = context;
         }
         // Felhasználónév ellenőrzése
         private static bool FelhasznalonevVizsgalat(string felhnev) 
@@ -156,7 +160,7 @@ namespace CsaladfaKutatoApp
         private void Hyperlink_Regisztracio(object sender, RequestNavigateEventArgs e)
         {
             // A "MainWindow" Frame-jén keresztül navigálunk
-            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new RegisztracioPage());
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new RegisztracioPage(_context));
             e.Handled = true;
         } 
 

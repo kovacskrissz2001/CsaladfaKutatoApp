@@ -25,10 +25,7 @@ namespace CsaladfaKutatoApp
         public MainWindow()
         {
             InitializeComponent();
-            // Itt töltjük be a kezdőoldalt (bejelentkezés)
-            //MainFrame.Navigate(new BejelentkezesPage());
-
-            MainFrame.Navigate(new ElsoCsaladtagHozzaadPage());
+            
 
             // Konfiguráció beolvasása
             var configuration = new ConfigurationBuilder()
@@ -41,6 +38,11 @@ namespace CsaladfaKutatoApp
 
             // DbContext példányosítása
             _context = new CsaladfaAdatbazisContext(optionsBuilder.Options);
+            
+            // Itt töltjük be a kezdőoldalt (bejelentkezés)
+            MainFrame.Navigate(new BejelentkezesPage(_context));
+
+            // MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
 
         }
 
