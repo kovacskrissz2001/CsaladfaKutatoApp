@@ -14,6 +14,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using BCrypt.Net;
+using System.Security.Cryptography;
+using System.Text;
+using CsaladfaKutatoApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CsaladfaKutatoApp
 {
@@ -22,9 +27,11 @@ namespace CsaladfaKutatoApp
     /// </summary>
     public partial class RegisztracioPage : Page
     {
-        public RegisztracioPage()
+        private readonly CsaladfaAdatbazisContext _context;
+        public RegisztracioPage(CsaladfaAdatbazisContext context)
         {
             InitializeComponent();
+            _context = context;
         }
 
         // Felhasználónév ellenőrzése
@@ -163,7 +170,7 @@ namespace CsaladfaKutatoApp
         private void Hyperlink_Bejelentkezes(object sender, RequestNavigateEventArgs e)
         {
             // A "MainWindow" Frame-jén keresztül navigálunk
-            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new BejelentkezesPage());
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new BejelentkezesPage(_context));
             e.Handled = true;
         }
 
@@ -242,9 +249,95 @@ namespace CsaladfaKutatoApp
             FrissitBejelentkezesGombAllapot();
         }
 
+        // Só generálása (pl. 16 bájt = 128 bit)
+        private static string SaltGeneralas()
+        {
+            byte[] saltBytes = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(saltBytes);
+            }
+            return Convert.ToBase64String(saltBytes); // Ezt tárolom a "jelszoSalt" mezőben
+        }
+
+        // Hash készítése jelszó + só kombinációból
+        private static string HashJelszoSalttal(string jelszo, string so)
+        {
+            // Kombináljuk
+            var combined = Encoding.UTF8.GetBytes(jelszo + so);
+
+            // SHA256 hash (vagy használhatsz SHA512, PBKDF2, stb.)
+            using (var sha = SHA256.Create())
+            {
+                var hashBytes = sha.ComputeHash(combined);
+                return Convert.ToBase64String(hashBytes); // Ezt tárolom a "jelszoHash" mezőben
+            }
+        }
+
         private void Regisztracio_Click(object sender, RoutedEventArgs e)
         {
+            string felhasznalonev = AzonositoTextBox.Text;
+            string email = EmailTextBox.Text;
+            string jelszo = PasswordBox1.Password;
+            string bejelentkezesiMod = "felhasznalonev";
 
+            // 🔐 Só generálás
+            string salt = SaltGeneralas();
+
+            // 🔐 Hash készítés
+            string hash = HashJelszoSalttal(jelszo, salt);
+
+            //kapcsolódás az adatbázishoz
+            var connection = _context.Database.GetDbConnection();
+
+            //Tárolt eljárás meghívása a meglévő context-tel
+            try
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "sp_RegisztraljFelhasznalot";
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    // Paraméterek átadása
+                    var pAzonosito = command.CreateParameter();
+                    pAzonosito.ParameterName = "@Felhasznalonev";
+                    pAzonosito.Value = felhasznalonev;
+                    command.Parameters.Add(pAzonosito);
+
+                    var pEmail = command.CreateParameter();
+                    pEmail.ParameterName = "@Email";
+                    pEmail.Value = email;
+                    command.Parameters.Add(pEmail);
+
+                    var pHash = command.CreateParameter();
+                    pHash.ParameterName = "@JelszoHash";
+                    pHash.Value = hash;
+                    command.Parameters.Add(pHash);
+
+                    var pSalt = command.CreateParameter();
+                    pSalt.ParameterName = "@Salt";
+                    pSalt.Value = salt;
+                    command.Parameters.Add(pSalt);
+
+                    var pBejelentkezesMod = command.CreateParameter();
+                    pBejelentkezesMod.ParameterName = "@BejelentkezesiMod";
+                    pBejelentkezesMod.Value = bejelentkezesiMod;
+                    command.Parameters.Add(pBejelentkezesMod);
+
+                    command.ExecuteNonQuery();
+
+                    MessageBox.Show("Sikeres regisztráció!", "Kész", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Hiba történt a regisztrációnál: {ex.Message}", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                connection.Close();
+            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
