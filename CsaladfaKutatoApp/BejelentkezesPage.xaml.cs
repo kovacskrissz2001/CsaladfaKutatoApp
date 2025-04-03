@@ -17,7 +17,8 @@ using MahApps.Metro.Controls.Dialogs;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 using CsaladfaKutatoApp.Models;
-
+using CsaladfaKutatoApp.Segedeszkozok;
+using Microsoft.EntityFrameworkCore;
 
 namespace CsaladfaKutatoApp
 {
@@ -48,79 +49,37 @@ namespace CsaladfaKutatoApp
         }
       
         //AzonositoTextBox adatainak ellenőrzése és hibaüzenet
-        private bool AzonositoAdatokEllenorzese(string azonosito, bool emailMod, out string AzonositoHibaUzenet)
+        private bool AzonositoAdatokEllenorzese(string azonosito, bool emailMod, out string EmailHibaUzenet)
         {
-            AzonositoHibaUzenet = "";
-
+            EmailHibaUzenet = "";
             if (string.IsNullOrWhiteSpace(azonosito))
             {
                 return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(azonosito) && emailMod && !EmailVizsgalat(azonosito))
+            if (!string.IsNullOrWhiteSpace(azonosito) && emailMod==true && !EmailVizsgalat(azonosito))
             {
-                AzonositoHibaUzenet = "Nem megfelelő email formátum!";
+                EmailHibaUzenet = "Nem megfelelő email formátum!";
                 return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(azonosito) && !emailMod && !FelhasznalonevVizsgalat(azonosito))
-            {
-                AzonositoHibaUzenet = "A felhasználónév nem megfelelő!(3-20 karakter, betű, szám, _, .)";
-                return false;
-            }
             return true;
         }
 
         //PasswordBox adatainak ellenőrzése és hibaüzenet
-        private bool JelszoAdatokEllenorzese(string jelszo, out string JelszoHibaUzenet)
+        private bool JelszoAdatokEllenorzese(string jelszo)
         {
-            JelszoHibaUzenet = "";
 
             if (string.IsNullOrWhiteSpace(jelszo))
             {
                 return false;
             }
-            if (!string.IsNullOrWhiteSpace(jelszo) && jelszo.Length < 8)
-            {
-                JelszoHibaUzenet = "A jelszónak legalább 8 karakter hosszúnak kell lennie.";
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(jelszo) && !jelszo.Any(char.IsUpper))
-            {
-                JelszoHibaUzenet = "A jelszónak tartalmaznia kell legalább egy nagybetűt.";
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(jelszo) && !jelszo.Any(char.IsLower))
-            {
-                JelszoHibaUzenet = "A jelszónak tartalmaznia kell legalább egy kisbetűt.";
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(jelszo) && !jelszo.Any(char.IsDigit))
-            {
-                JelszoHibaUzenet = "A jelszónak tartalmaznia kell legalább egy számot.";
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(jelszo) && !jelszo.Any(ch => "!@#$%^&*()_-+=[]{}|;:,.<>?".Contains(ch)))
-            {
-                JelszoHibaUzenet = "A jelszónak tartalmaznia kell legalább egy speciális karaktert.";
-                return false;
-            }
-
-            if (!string.IsNullOrWhiteSpace(jelszo) && jelszo.Any(char.IsWhiteSpace))
-            {
-                JelszoHibaUzenet = "A jelszó nem tartalmazhat szóközt.";
-                return false;
-            }
 
             return true;
         }
 
 
-        private void FrissitBejelentkezesGombAllapot()
+        private void FrissitBejelentkezesGombAllapotLogin()
         {
             string azonosito = AzonositoTextBox.Text;
             string jelszo = PasswordBox.Visibility == Visibility.Visible
@@ -128,12 +87,10 @@ namespace CsaladfaKutatoApp
                             : PasswordTextBox.Text;
 
             bool emailMod = BejelentkezesiMod.IsOn;
-            bool ervenyesAzonosito = AzonositoAdatokEllenorzese(azonosito, emailMod, out string AzonositoHibaUzenet);
-            bool ervenyesJelszo = JelszoAdatokEllenorzese(jelszo, out string JelszoHibaUzenet);
+            bool ervenyesAzonosito = AzonositoAdatokEllenorzese(azonosito, emailMod, out string EmailHibaUzenet);
+            bool ervenyesJelszo = JelszoAdatokEllenorzese(jelszo);
 
-            //hibaüzenetet valós időben:
-            HibaUzenetAzonosito.Text = ervenyesAzonosito ? "" : AzonositoHibaUzenet;
-            HibaUzenetJelszo.Text = ervenyesJelszo ? "" : JelszoHibaUzenet;
+            HibaUzenetAzonosito.Text = ervenyesAzonosito ? "" : EmailHibaUzenet;
 
             //Bejelentkezés gob aktiválása
             if (ervenyesAzonosito == true && ervenyesJelszo == true)
@@ -155,7 +112,7 @@ namespace CsaladfaKutatoApp
             AzonositoTextBox.SetValue(MahApps.Metro.Controls.TextBoxHelper.WatermarkProperty,
             emailMod ? "Email cím" : "Felhasználónév");
 
-            FrissitBejelentkezesGombAllapot();
+            FrissitBejelentkezesGombAllapotLogin();
         }
         private void Hyperlink_Regisztracio(object sender, RequestNavigateEventArgs e)
         {
@@ -191,9 +148,69 @@ namespace CsaladfaKutatoApp
             string azonosito = AzonositoTextBox.Text;
             string jelszo = PasswordBox.Visibility == Visibility.Visible ? PasswordBox.Password : PasswordTextBox.Text;
             bool emailMod = BejelentkezesiMod.IsOn;
-            HibaUzenetBejelentkezes.Text = "";
+            string aktualisMod = emailMod ? "email" : "felhasznalonev";
+            HibaUzenetAzonosito.Text = "";
+            HibaUzenetJelszo.Text = "";
 
-            // További bejelentkezési logika
+
+
+
+            try
+            {
+                // Lekérjük a felhasználót az adatbázisból, megfelelő BejelentkezesiMod szerint
+                var felhasznalo = emailMod
+                    ? _context.Felhasznaloks.FirstOrDefault(f => f.Email == azonosito)
+                    : _context.Felhasznaloks.FirstOrDefault(f => f.Felhasznalonev == azonosito);
+               
+                if (felhasznalo == null)
+                {
+                    HibaUzenetAzonosito.Text = "Nincs ilyen felhasználó.";
+                    return;
+                }
+               
+
+                // Jelszó hash újragenerálása
+                string ujHash = JelszoHasher.HashJelszoSalttal(jelszo, felhasznalo.JelszoSalt);
+
+                // Összehasonlítás
+                if (ujHash == felhasznalo.JelszoHash)
+                {
+                    MessageBox.Show("Sikeres bejelentkezés!", "Üdvözlünk", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Csak itt, sikeres bejelentkezés után fut le a tárolt eljárás!
+                    var connection = _context.Database.GetDbConnection();
+                    connection.Open();
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = "sp_ModositBejelentkezesiMod";
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        var p1 = command.CreateParameter();
+                        p1.ParameterName = "@AzonositoVagyEmail";
+                        p1.Value = azonosito;
+                        command.Parameters.Add(p1);
+
+                        var p2 = command.CreateParameter();
+                        p2.ParameterName = "@UjMod";
+                        p2.Value = aktualisMod;
+                        command.Parameters.Add(p2);
+
+                        command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+
+                    // TODO: Navigálás főoldalra, felhasználó mentése stb.
+                }
+                else
+                {
+                    HibaUzenetJelszo.Text = "Hibás jelszó.";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Hiba történt a bejelentkezés során: {ex.Message}", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -204,12 +221,12 @@ namespace CsaladfaKutatoApp
 
         private void BemenetiSzovegValtozas(object sender, TextChangedEventArgs e)
         {
-            FrissitBejelentkezesGombAllapot();
+            FrissitBejelentkezesGombAllapotLogin();
         }
 
         private void BemenetiJelszoValtozas(object sender, RoutedEventArgs e)
         {
-            FrissitBejelentkezesGombAllapot();       
+            FrissitBejelentkezesGombAllapotLogin();       
         }     
     }
 }
