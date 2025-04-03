@@ -8,12 +8,12 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="BejelentkezesPage">
-    <Grid Height="400" Margin="20,25,21,25">
+    <Grid Margin="10,30,20,24" Focusable="True" Background="Transparent" MouseDown="Grid_MouseDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -23,7 +23,7 @@
 
         <!-- Alkalmazás címe -->
         <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Családfakutató Applikáció"
-           FontSize="24" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,20"/>
+           FontSize="24" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,20" Width="784"/>
 
         <!-- Felhasználó üdvözlése -->
         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Üdvözöljük a Családfakutató Applikációban!"
@@ -34,48 +34,48 @@
            TextAlignment="Center" Margin="0,10,0,10"/>
 
         <!-- Bal oldali címkék -->
-        <StackPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0,36,379,59" Grid.RowSpan="2">
+
+        <StackPanel Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="0,16,10,30" Width="201">
             <!-- Azonosító típus választó -->
-            <Label Content="Bejelentkezési mód váltása"/>
+            <Label Content="Bejelentkezési mód váltása" Margin="0,5,0,2"/>
             <!-- Azonosító típus választó -->
             <controls:ToggleSwitch x:Name="BejelentkezesiMod"
-                       OffContent="Felhasználónév"
-                       OnContent="Email"
-                       IsOn="False" Toggled="BejelentkezesiMod_Valtva" Margin="0,0,0,10"/>
-            <Label Content="Jelszó:" Margin="0,0,0,10" FontSize="14" HorizontalContentAlignment="Left" Width="99"/>
-            <Label Content="Ha még nincs fiókja itt regisztrálhat:"  HorizontalContentAlignment="Left" Width="198" Height="37"/>
-            <TextBlock Width="190" Height="17"><Hyperlink NavigateUri="reg" RequestNavigate="Hyperlink_Regisztracio"><Run Text="Regisztráció"/></Hyperlink></TextBlock>
+                       OffContent="Felhasználónév:"
+                       OnContent="Email:"
+                       IsOn="False" Toggled="BejelentkezesiMod_Valtva" Margin="0,0,0,22" Width="156"/>
+            <Label Content="Jelszó:" Margin="0,0,0,10" FontSize="14" HorizontalContentAlignment="Left" Width="92"/>
+            <Label Content="Ha még nincs fiókja itt regisztrálhat:"  HorizontalContentAlignment="Left" Width="202" Height="28"/>
+            <TextBlock Width="184" Height="17"><Hyperlink NavigateUri="reg" RequestNavigate="Hyperlink_Regisztracio"><Run Text="Regisztráció"/></Hyperlink></TextBlock>
         </StackPanel>
 
         <!-- Jobb oldali mezők -->
-        <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="0,36,0,59" Grid.RowSpan="2">
-            <Label Content="Felhasználói adatok" HorizontalContentAlignment="Center" Margin="0,0,0,8"/>
-            <TextBox x:Name="AzonositoTextBox"  Width="200" controls:TextBoxHelper.Watermark="Felhasználónév" Margin="0,0,0,10"/>
-            <Grid Margin="0,0,0,45">
+        <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="5,16,0,30" Width="370">
+            <Label Content="Felhasználói adatok" HorizontalContentAlignment="Left" Margin="48,5,0,8"/>
+            <TextBox x:Name="AzonositoTextBox"  Width="200" controls:TextBoxHelper.Watermark="Felhasználónév" TextChanged="BemenetiSzovegValtozas"  Margin="5,0,160,5"/>
+            <!-- Hibaüzenet -->
+            <TextBlock x:Name="HibaUzenetAzonosito" Foreground="Red" Margin="10,0,20,5"/>
+            <Grid Margin="7,0,132,5">
                 <PasswordBox x:Name="PasswordBox"
                     Margin="0,0,30,0"
                     controls:TextBoxHelper.Watermark="Jelszó"
-                    PasswordChanged="PasswordBoxes_Valtozas"
-                    LostFocus="PasswordBox_FokuszVesztes"/>
+                    PasswordChanged="BemenetiJelszoValtozas"/>
                 <TextBox x:Name="PasswordTextBox"
                     Visibility="Collapsed"
                     Margin="0,0,30,0"
-                    TextChanged="PasswordTextBox_SzovegValtozas"/>
+                    TextChanged="BemenetiSzovegValtozas"/>
                 <Button Content="👁"
                     Width="25" Height="25"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Click="JelszoLathatosagValtas"/>
             </Grid>
-
+            <TextBlock x:Name="HibaUzenetJelszo" Foreground="Red" Margin="10,0,20,18"/>
             <Button x:Name="BejelentkezButton" Content="Bejelentkezés"
-                IsEnabled="False" Click="Bejelentkezes_Click" Width="200"/>
 
-            <!-- Hibaüzenet -->
-            <TextBlock x:Name="HibaUzenet" Foreground="Red" Margin="0,5,0,0"/>
-
+                IsEnabled="False" Click="Bejelentkezes_Click" Width="200" HorizontalAlignment="Left" Margin="8,0,0,0"/>
         </StackPanel>
-
+        <!-- Hibaüzenet -->
+        <TextBlock x:Name="HibaUzenet" Foreground="Red" Margin="10,224,30,10" Grid.Row="3" Grid.Column="1" RenderTransformOrigin="0.5,0.5">
+        </TextBlock>
     </Grid>
-
 </Page>
