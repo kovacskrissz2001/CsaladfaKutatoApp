@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CsaladfaKutatoApp.Models;
 using Microsoft.EntityFrameworkCore;
+using CsaladfaKutatoApp.Segedeszkozok;
 
 namespace CsaladfaKutatoApp
 {
@@ -249,31 +250,6 @@ namespace CsaladfaKutatoApp
             FrissitBejelentkezesGombAllapot();
         }
 
-        // Só generálása (pl. 16 bájt = 128 bit)
-        private static string SaltGeneralas()
-        {
-            byte[] saltBytes = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(saltBytes);
-            }
-            return Convert.ToBase64String(saltBytes); // Ezt tárolom a "jelszoSalt" mezőben
-        }
-
-        // Hash készítése jelszó + só kombinációból
-        private static string HashJelszoSalttal(string jelszo, string so)
-        {
-            // Kombináljuk
-            var combined = Encoding.UTF8.GetBytes(jelszo + so);
-
-            // SHA256 hash (vagy használhatsz SHA512, PBKDF2, stb.)
-            using (var sha = SHA256.Create())
-            {
-                var hashBytes = sha.ComputeHash(combined);
-                return Convert.ToBase64String(hashBytes); // Ezt tárolom a "jelszoHash" mezőben
-            }
-        }
-
         private void Regisztracio_Click(object sender, RoutedEventArgs e)
         {
             string felhasznalonev = AzonositoTextBox.Text;
@@ -282,10 +258,11 @@ namespace CsaladfaKutatoApp
             string bejelentkezesiMod = "felhasznalonev";
 
             // 🔐 Só generálás
-            string salt = SaltGeneralas();
+            string salt = JelszoHasher.SaltGeneralas();
+
 
             // 🔐 Hash készítés
-            string hash = HashJelszoSalttal(jelszo, salt);
+            string hash = JelszoHasher.HashJelszoSalttal(jelszo, salt);
 
             //kapcsolódás az adatbázishoz
             var connection = _context.Database.GetDbConnection();
