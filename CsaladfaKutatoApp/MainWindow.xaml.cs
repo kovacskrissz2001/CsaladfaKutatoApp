@@ -38,12 +38,12 @@ namespace CsaladfaKutatoApp
 
             // DbContext példányosítása
             _context = new CsaladfaAdatbazisContext(optionsBuilder.Options);
-            
-            // Itt töltjük be a kezdőoldalt (bejelentkezés)
+
+            //Itt töltjük be a kezdőoldalt (bejelentkezés)
             MainFrame.Navigate(new BejelentkezesPage(_context));
 
             // MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
-
+           // MainFrame.Navigate(new FastrukturaPage());
         }
 
 
