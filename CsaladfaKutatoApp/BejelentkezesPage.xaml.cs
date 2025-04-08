@@ -179,7 +179,7 @@ namespace CsaladfaKutatoApp
                     // Csak itt, sikeres bejelentkezés után fut le a tárolt eljárás!
                     var connection = _context.Database.GetDbConnection();
                     connection.Open();
-
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).BejelentkezettFelhasznaloId = felhasznalo.FelhasznaloId;
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = "sp_ModositBejelentkezesiMod";
@@ -200,7 +200,8 @@ namespace CsaladfaKutatoApp
 
                     connection.Close();
 
-                    // TODO: Navigálás főoldalra, felhasználó mentése stb.
+                    // Navigálás ElsoCsaladtagHozzaadPage oldalra.
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
                 }
                 else
                 {
@@ -210,6 +211,7 @@ namespace CsaladfaKutatoApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Hiba történt a bejelentkezés során: {ex.Message}", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
         }
 
