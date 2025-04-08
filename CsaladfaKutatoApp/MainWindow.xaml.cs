@@ -22,6 +22,9 @@ namespace CsaladfaKutatoApp
     public partial class MainWindow : MetroWindow
     {
         private CsaladfaAdatbazisContext _context;
+
+        public int? BejelentkezettFelhasznaloId { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();

@@ -75,8 +75,8 @@
                     </UniformGrid>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
-                        <Button Content="Hozzáadás" Width="100" Margin="5"/>
-                        <Button Content="Mégse" Width="100" Margin="5"/>
+                        <Button Content="Hozzáadás" Width="100" Margin="5" Click="Hozzaadas_Click"/>
+                        <Button Content="Mégse" Width="100" Margin="5" Click="Megse_Click"/>
                     </StackPanel>
 
                 </StackPanel>
