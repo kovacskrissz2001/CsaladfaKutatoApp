@@ -8,10 +8,9 @@
         mc:Ignorable="d"
         Title="Családfakutató Applikáció" Height="450" Width="800">
 
-    <Viewbox Stretch="Uniform">
-        <Frame x:Name="MainFrame"
-               Width="906"
-               Height="497"
-               NavigationUIVisibility="Hidden" />
+    <Viewbox Stretch="Fill">
+        <Grid Width="800" Height="450">
+            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+        </Grid>
     </Viewbox>
 </controls:MetroWindow>

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,7 +47,11 @@ namespace CsaladfaKutatoApp
             MainFrame.Navigate(new BejelentkezesPage(_context));
 
             // MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
-           // MainFrame.Navigate(new FastrukturaPage());
+           //MainFrame.Navigate(new KozpontiPage(_context));
+
+            
+
+
         }
 
 

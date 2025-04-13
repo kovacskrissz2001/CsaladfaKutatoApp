@@ -137,7 +137,7 @@ namespace CsaladfaKutatoApp
                 MessageBox.Show("Családtag sikeresen hozzáadva!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 // Navigálás Főolalra.
-               //((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
+               ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context));
             }
             catch (Exception ex)
             {

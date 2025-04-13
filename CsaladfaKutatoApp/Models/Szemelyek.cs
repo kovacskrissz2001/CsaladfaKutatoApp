@@ -11,13 +11,13 @@ public partial class Szemelyek
 
     public string Vezeteknev { get; set; } = null!;
 
-    public DateOnly? SzuletesiDatum { get; set; }
+    public DateOnly? SzuletesiDatum { get; set; } = null!;
 
     public DateOnly? HalalozasiDatum { get; set; }
 
-    public bool EloSzemely { get; set; }
+    public bool EloSzemely { get; set; } 
 
-    public string? Neme { get; set; }
+    public string? Neme { get; set; } = null!;
 
     public string? Tanulmanya { get; set; }
 

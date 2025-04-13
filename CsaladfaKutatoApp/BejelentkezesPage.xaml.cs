@@ -200,8 +200,8 @@ namespace CsaladfaKutatoApp
 
                     connection.Close();
 
-                    // Navigálás ElsoCsaladtagHozzaadPage oldalra.
-                    ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
+                    // Navigálás KozpontiPage oldalra.
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context));
                 }
                 else
                 {
