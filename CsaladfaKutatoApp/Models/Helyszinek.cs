@@ -7,7 +7,7 @@ public partial class Helyszinek
 {
     public int HelyszinId { get; set; }
 
-    public string? SzuletesiHely { get; set; }
+    public string? SzuletesiHely { get; set; } = null!;
 
     public string? HalalozasiHely { get; set; }
 

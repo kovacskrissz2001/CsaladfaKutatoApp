@@ -305,6 +305,8 @@ namespace CsaladfaKutatoApp
                     command.ExecuteNonQuery();
 
                     MessageBox.Show("Sikeres regisztráció!", "Kész", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Navigálás ElsoCsaladtagHozzaadPage oldalra.
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
                 }
             }
             catch (Exception ex)

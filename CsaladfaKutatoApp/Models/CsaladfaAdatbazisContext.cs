@@ -30,7 +30,9 @@ public partial class CsaladfaAdatbazisContext : DbContext
     public virtual DbSet<Szemelyek> Szemelyeks { get; set; }
 
     public virtual DbSet<Tortenetek> Torteneteks { get; set; }
-    
+
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Felhasznalok>(entity =>
@@ -163,6 +165,8 @@ public partial class CsaladfaAdatbazisContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Tortenete__Szeme__7C4F7684");
         });
+
+        
 
         OnModelCreatingPartial(modelBuilder);
     }
