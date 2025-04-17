@@ -47,7 +47,7 @@ namespace CsaladfaKutatoApp
             MainFrame.Navigate(new BejelentkezesPage(_context));
 
             // MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
-           //MainFrame.Navigate(new KozpontiPage(_context));
+            //MainFrame.Navigate(new KozpontiPage(_context));
 
             
 

@@ -27,13 +27,70 @@ namespace CsaladfaKutatoApp
     public partial class KozpontiPage : Page
     {
         private readonly CsaladfaAdatbazisContext _context;
+        private readonly int? _felhasznaloId;
+        private Point _lastMousePosition;
+        private bool _isDragging = false;
 
-        public KozpontiPage(CsaladfaAdatbazisContext context)
+        public KozpontiPage(CsaladfaAdatbazisContext context, int? felhasznaloId)
         {
             InitializeComponent();
             _context = context;
+            _felhasznaloId = felhasznaloId;
 
-            Loaded += (s, e) => MegjelenitCsaladfat(); // hívás betöltéskor
+            TartalomValto.Content = new KezdoTartalomControl(this, _context);
+
+            Loaded += KozpontiPage_Loaded; // hívás betöltéskor
+        }
+
+        private void KozpontiPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Kisebb zoom (pl. 80% méret)
+            CanvasScaleTransform.ScaleX = 0.8;
+            CanvasScaleTransform.ScaleY = 0.8;
+
+            MegjelenitCsaladfat();
+        }
+
+        public void TartalomValtas(UserControl ujTartalom)
+        {
+            TartalomValto.Content = ujTartalom;
+        }
+
+        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = true;
+            _lastMousePosition = e.GetPosition(this);
+            CsaladfaVaszon.CaptureMouse();
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                Point currentPosition = e.GetPosition(this);
+                Vector delta = currentPosition - _lastMousePosition;
+
+                CanvasTranslateTransform.X += delta.X;
+                CanvasTranslateTransform.Y += delta.Y;
+
+                _lastMousePosition = currentPosition;
+            }
+        }
+
+        private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            _isDragging = false;
+            CsaladfaVaszon.ReleaseMouseCapture();
+        }
+
+        private void CsaladfaScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            double zoomFactor = e.Delta > 0 ? 1.1 : 1 / 1.1;
+
+            CanvasScaleTransform.ScaleX *= zoomFactor;
+            CanvasScaleTransform.ScaleY *= zoomFactor;
+
+            e.Handled = true;
         }
 
         private void RajzolSzemelyt(RajzoltSzemely szemely, double pozicioX, double pozicioY)
@@ -41,7 +98,7 @@ namespace CsaladfaKutatoApp
             var tartalomDoboz = new StackPanel
             {
                 Orientation = Orientation.Vertical,
-                Width = 80
+                Width = 100
             };
 
             BitmapImage bitmap;
@@ -81,7 +138,9 @@ namespace CsaladfaKutatoApp
             {
                 Text = szemely.VNev +" "+szemely.KNev,
                 TextAlignment = TextAlignment.Center,
-                FontWeight = FontWeights.Bold
+                FontWeight = FontWeights.Bold,
+                TextWrapping = TextWrapping.Wrap,
+                MaxWidth = 90
             };
 
             var datumSzoveg = new TextBlock
@@ -120,6 +179,7 @@ namespace CsaladfaKutatoApp
         {
             return _context.Szemelyeks
                 .Include(s => s.Fotoks)
+                .Where(s => s.FelhasznaloId == _felhasznaloId)
                 .Select(s => new RajzoltSzemely
                 {
                     Azonosito = s.SzemelyId,
@@ -145,50 +205,7 @@ namespace CsaladfaKutatoApp
             }
         }
 
-        private void NemKapcsolodoHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void LanyaHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FiaHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PartnerHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FiuTestverHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void LanyTestverHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void AnyaHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void ApaHozzaadasa_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
+        
 
         private void Kijelentkezes_Click(object sender, RoutedEventArgs e)
         {

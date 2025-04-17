@@ -265,13 +265,13 @@ namespace CsaladfaKutatoApp
             string hash = JelszoHasher.HashJelszoSalttal(jelszo, salt);
 
             //kapcsolódás az adatbázishoz
-            var connection = _context.Database.GetDbConnection();
+            var kapcsolat = _context.Database.GetDbConnection();
 
             //Tárolt eljárás meghívása a meglévő context-tel
             try
             {
-                connection.Open();
-                using (var command = connection.CreateCommand())
+                kapcsolat.Open();
+                using (var command = kapcsolat.CreateCommand())
                 {
                     command.CommandText = "sp_RegisztraljFelhasznalot";
                     command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -304,9 +304,9 @@ namespace CsaladfaKutatoApp
 
                     command.ExecuteNonQuery();
 
-                    MessageBox.Show("Sikeres regisztráció!", "Kész", MessageBoxButton.OK, MessageBoxImage.Information);
-                    // Navigálás ElsoCsaladtagHozzaadPage oldalra.
-                    ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
+                    MessageBox.Show("Sikeres regisztráció! Kérjük a továbbiakban jelentkezzen be fiókjába!", "Kész", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Navigálás Vissza a Bejelentkezés oldalra.
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new BejelentkezesPage(_context));
                 }
             }
             catch (Exception ex)
@@ -315,7 +315,7 @@ namespace CsaladfaKutatoApp
             }
             finally
             {
-                connection.Close();
+                kapcsolat.Close();
             }
         }
 
