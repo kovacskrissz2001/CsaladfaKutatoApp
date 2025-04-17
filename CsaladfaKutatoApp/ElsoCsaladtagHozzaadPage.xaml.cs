@@ -25,6 +25,8 @@ namespace CsaladfaKutatoApp
     public partial class ElsoCsaladtagHozzaadPage : Page
     {
         private readonly CsaladfaAdatbazisContext _context;
+        
+
         public ElsoCsaladtagHozzaadPage(CsaladfaAdatbazisContext context)
         {
             InitializeComponent();
@@ -126,7 +128,7 @@ namespace CsaladfaKutatoApp
                     command.Parameters.Add(CreateParameter(command, "@Neme", neme));
                     command.Parameters.Add(CreateParameter(command, "@EloSzemely", elo.Value));
                     command.Parameters.Add(CreateParameter(command, "@SzuletesiHely", szuletesiHely));
-                    command.Parameters.Add(CreateParameter(command, "@FelhasznaloId", ((MainWindow)System.Windows.Application.Current.MainWindow).BejelentkezettFelhasznaloId)); //  dinamikusan jön
+                    command.Parameters.Add(CreateParameter(command, "@FelhasznaloId", felhasznaloId)); //  dinamikusan jön
                     
 
                     command.ExecuteNonQuery();
@@ -136,8 +138,9 @@ namespace CsaladfaKutatoApp
 
                 MessageBox.Show("Családtag sikeresen hozzáadva!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
 
+                
                 // Navigálás Főolalra.
-               ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context));
+               ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, felhasznaloId));
             }
             catch (Exception ex)
             {
