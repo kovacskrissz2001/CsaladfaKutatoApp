@@ -84,9 +84,16 @@ public partial class CsaladfaAdatbazisContext : DbContext
 
             entity.ToTable("Helyszinek");
 
-            entity.Property(e => e.HalalozasiHely).HasMaxLength(255);
-            entity.Property(e => e.OrokNyugalomHelye).HasMaxLength(255);
-            entity.Property(e => e.SzuletesiHely).HasMaxLength(255);
+            
+            entity.Property(e => e.SzuletesiOrszag).HasMaxLength(255);
+            entity.Property(e => e.SzuletesiRegio).HasMaxLength(255);
+            entity.Property(e => e.SzuletesiTelepules).HasMaxLength(255);
+            entity.Property(e => e.HalalozasiOrszag).HasMaxLength(255);
+            entity.Property(e => e.HalalozasiRegio).HasMaxLength(255);
+            entity.Property(e => e.HalalozasiTelepules).HasMaxLength(255);
+            entity.Property(e => e.OrokNyugalomHelyeOrszag).HasMaxLength(255);
+            entity.Property(e => e.OrokNyugalomHelyeRegio).HasMaxLength(255);
+            entity.Property(e => e.OrokNyugalomHelyeTelepules).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Kapcsolatok>(entity =>
@@ -96,7 +103,7 @@ public partial class CsaladfaAdatbazisContext : DbContext
             entity.ToTable("Kapcsolatok");
 
             entity.Property(e => e.KapcsolatTipusa).HasMaxLength(50);
-            entity.Property(e => e.KapcsolodoSzemelyNeve).HasMaxLength(255);
+            
 
             entity.HasOne(d => d.KapcsolodoSzemely).WithMany(p => p.KapcsolatokKapcsolodoSzemelies)
                 .HasForeignKey(d => d.KapcsolodoSzemelyId)

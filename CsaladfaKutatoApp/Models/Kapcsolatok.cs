@@ -11,8 +11,6 @@ public partial class Kapcsolatok
 
     public int KapcsolodoSzemelyId { get; set; }
 
-    public string KapcsolodoSzemelyNeve { get; set; } = null!;
-
     public string KapcsolatTipusa { get; set; } = null!;
 
     public virtual Szemelyek KapcsolodoSzemely { get; set; } = null!;

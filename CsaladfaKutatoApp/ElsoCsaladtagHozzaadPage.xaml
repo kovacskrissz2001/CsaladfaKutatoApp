@@ -67,12 +67,19 @@
                         <TextBox Name="KeresztnevTextBox" Margin="0,5"/>
                         <TextBox Name="VezeteknevTextBox" Margin="5"/>
 
-                        <TextBlock Text="Születési dátum:" VerticalAlignment="Center"/>
-                        <TextBlock Text="Születési hely:" VerticalAlignment="Center"/>
+                        <TextBlock Text="Születési dátum(yyyy-mm-dd):" VerticalAlignment="Center"/>
+                        <TextBlock Text="Születési ország:" VerticalAlignment="Center"/>
 
                         <TextBox Name="SzuletesiDatumTextBox" Margin="0,5"/>
-                        <TextBox Name="SzuletesiHelyTextBox" Margin="5"/>
+                        <TextBox Name="SzuletesiOrszagTextBox" Margin="5"/>
+
+                        
                     </UniformGrid>
+                    <WrapPanel Margin="5,0,0,0">
+                        <TextBlock Text="Születési Település:" VerticalAlignment="Center" Margin="0,0,68,0"/>
+                        <TextBox Name="SzuletesiTelepulesTextBox" Width="158"/>
+                    </WrapPanel>
+                    
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                         <Button Content="Hozzáadás" Width="100" Margin="5" Click="Hozzaadas_Click"/>

@@ -25,7 +25,7 @@ public partial class Szemelyek
 
     public string? Vallasa { get; set; }
 
-    public int FelhasznaloId { get; set; }
+    public int? FelhasznaloId { get; set; }
 
     public int? HelyszinId { get; set; }
 
