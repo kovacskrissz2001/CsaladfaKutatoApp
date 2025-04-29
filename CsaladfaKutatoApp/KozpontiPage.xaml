@@ -11,45 +11,52 @@
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="125"/>
             <!-- Bal oldali menüsáv -->
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition/>
             <!-- Családfa -->
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="275"/>
             <!-- Jobb oldali panel -->
         </Grid.ColumnDefinitions>
 
         <!-- BAL oldali menü -->
-        <StackPanel Grid.Column="0" Background="#EEE" Orientation="Vertical" Grid.RowSpan="3">
+        <StackPanel Grid.Column="0" Background="#EEE" Orientation="Vertical" Margin="0,0,0,0">
             <TextBlock Text="Menü" FontWeight="Bold" FontSize="16" Margin="10,10,10,20" TextAlignment="Center"/>
-            <Button Content="Új családfa"  Padding="5" Margin="5,5,5,10"/>
-            <Button Content="Megnyitás" Margin="5,5,5,10" Padding="5"/>
-            <Button Content="Mentés" Margin="5,5,5,10" Padding="5"/>
-            <Button Content="Eszközök" Margin="5,5,5,10" Padding="5"/>
-            <Button Content="Nyomtatás" Margin="5,5,5,10" Padding="5"/>
-            <Button Content="Segítség" Margin="5,5,5,10" Padding="5"/>
-            <Button Content="Kijelentkezés" Margin="5,5,5,10" Padding="5" Click="Kijelentkezes_Click"/>
+            <Button Content="Új családfa"  Padding="5" Margin="5,5,5,10" Width="110"/>
+            <Button Content="Megnyitás" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Mentés" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Eszközök" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Nyomtatás" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Segítség" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Kijelentkezés" Margin="5,5,5,10" Padding="5" Click="Kijelentkezes_Click" Width="110"/>
         </StackPanel>
 
         <!-- Családfa -->
-        <Grid Grid.Column="1" Grid.RowSpan="3" >
+        <Grid Margin="3,0,0,0" Grid.Column="1" >
             <ScrollViewer Name="CsaladfaScrollViewer"
               HorizontalScrollBarVisibility="Auto"
               VerticalScrollBarVisibility="Auto"
               PreviewMouseWheel="CsaladfaScrollViewer_PreviewMouseWheel">
-                <Canvas x:Name="CsaladfaVaszon" Background="White" MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
-                    MouseMove="Canvas_MouseMove"
-                    MouseLeftButtonUp="Canvas_MouseLeftButtonUp"
-                    RenderTransformOrigin="0.5,0.5">    
-                    <Canvas.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="CanvasScaleTransform" ScaleX="1" ScaleY="1"/>
-                            <TranslateTransform x:Name="CanvasTranslateTransform" X="0" Y="0"/>
-                        </TransformGroup>
-                    </Canvas.RenderTransform>
-                </Canvas>
+                <Grid>
+                    <!-- Láthatatlan réteg a drag-hez -->
+                    <Rectangle Fill="Transparent"
+                       MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                       MouseMove="Canvas_MouseMove"
+                       MouseLeftButtonUp="Canvas_MouseLeftButtonUp" />
+                    <Canvas x:Name="CsaladfaVaszon" Background="White" MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                        MouseMove="Canvas_MouseMove"
+                        MouseLeftButtonUp="Canvas_MouseLeftButtonUp"
+                        RenderTransformOrigin="0.5,0.5">
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform x:Name="CanvasScaleTransform" ScaleX="1" ScaleY="1"/>
+                                <TranslateTransform x:Name="CanvasTranslateTransform" X="0" Y="0"/>
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                    </Canvas>
+                </Grid>
             </ScrollViewer>
-            
+
         </Grid>
 
         <!-- JOBB oldali panel -->

@@ -78,7 +78,8 @@ namespace CsaladfaKutatoApp
             string keresztnev = KeresztnevTextBox.Text.Trim();
             string vezeteknev = VezeteknevTextBox.Text.Trim();
             string szuletesiDatumSzoveg = SzuletesiDatumTextBox.Text.Trim();
-            string szuletesiHely = SzuletesiHelyTextBox.Text.Trim();
+            string szuletesiTelepules = SzuletesiTelepulesTextBox.Text.Trim();
+            string szuletesiOrszag = SzuletesiOrszagTextBox.Text.Trim();
 
             // Nem (rádiógomb) kiválasztása
             string neme = FindCheckedRadioButton("Nem");
@@ -90,7 +91,8 @@ namespace CsaladfaKutatoApp
             if (string.IsNullOrWhiteSpace(keresztnev) ||
                 string.IsNullOrWhiteSpace(vezeteknev) ||
                 string.IsNullOrWhiteSpace(szuletesiDatumSzoveg) ||
-                string.IsNullOrWhiteSpace(szuletesiHely) ||
+                string.IsNullOrWhiteSpace(szuletesiTelepules) ||
+                string.IsNullOrWhiteSpace(szuletesiOrszag) ||
                 string.IsNullOrWhiteSpace(neme) ||
                 !elo.HasValue)
             {
@@ -108,7 +110,7 @@ namespace CsaladfaKutatoApp
 
             if (!DateTime.TryParse(szuletesiDatumSzoveg, out DateTime szuletesiDatum))
             {
-                MessageBox.Show("Hibás születési dátum formátum!", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Hibás születési dátum formátum! A yyyy-mm-dd formátum a megfelelő.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -127,7 +129,8 @@ namespace CsaladfaKutatoApp
                     command.Parameters.Add(CreateParameter(command, "@SzuletesiDatum", szuletesiDatum));
                     command.Parameters.Add(CreateParameter(command, "@Neme", neme));
                     command.Parameters.Add(CreateParameter(command, "@EloSzemely", elo.Value));
-                    command.Parameters.Add(CreateParameter(command, "@SzuletesiHely", szuletesiHely));
+                    command.Parameters.Add(CreateParameter(command, "@SzuletesiOrszag", szuletesiOrszag));
+                    command.Parameters.Add(CreateParameter(command, "@SzuletesiTelepules", szuletesiTelepules));
                     command.Parameters.Add(CreateParameter(command, "@FelhasznaloId", felhasznaloId)); //  dinamikusan jön
                     
 
