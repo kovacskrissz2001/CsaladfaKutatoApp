@@ -19,6 +19,13 @@ namespace CsaladfaKutatoApp.Models.DTO
         public string? KepBase64 { get; set; }
         public Border UIElem { get; set; }
         public int GeneracioSzint { get; set; }
-        public List<int> GyermekAzonositoLista { get; set; } = new();
+        public int GyermekekSzama { get; set; } 
+        public RajzoltSzemely? Apa {  get; set; }
+        public RajzoltSzemely? Anya { get; set; }
+        public bool? ApaRajzolElobb { get; set; }
+        public bool? NotRajzoljunkElobbParbol { get; set; }
+        public bool GyermekAzIlleto {  get; set; }
+        public bool? ELsoGyerek {  get; set; }//A szülő első gyereke-e a személy
+        public int? ELsoGyerekId { get; set; }//A személy első gyerekének az azonosítója
     }
 }
