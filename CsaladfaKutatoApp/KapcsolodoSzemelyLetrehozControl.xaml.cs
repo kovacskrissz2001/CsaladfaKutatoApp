@@ -283,6 +283,12 @@ namespace CsaladfaKutatoApp
                 s.Helyszin.SzuletesiOrszag == SzuletesiOrszagTextBox.Text.Trim() &&
                 s.Helyszin.SzuletesiTelepules == SzuletesiTelepulesTextBox.Text.Trim());
 
+            //ellenőrizni kell,hogy a családfában már szereplő embereket ne lehessen hozzáadni senkihez
+            //Ezt úgy érjük el hogy ellenőrizzük van e már a személyhet tartozó rekord Gyermek típussa, úgy hogy ő a KapcsSzemelyId
+            //azt már ellenőrizük hogy az adott személy meglévő gyrekét ne adhassuk újra a szülőhöz
+            //azt is ellenőrizni kell hogy más gyerekét se
+            //illetve azt is ellenőrizni kell hogy rokonokat ne adhassunk parnerként egyáshoz
+
             try
             {
                 if (letezikSzemely && _kapcsolatTipus == "Nem kapcsolódó személy")
