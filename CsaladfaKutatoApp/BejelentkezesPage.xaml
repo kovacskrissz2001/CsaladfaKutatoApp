@@ -3,12 +3,20 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:MahApps.Metro="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:local="clr-namespace:CsaladfaKutatoApp"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="BejelentkezesPage">
-    <Grid Margin="10,30,20,24" Focusable="True" Background="Transparent" MouseDown="Grid_MouseDown">
+    
+
+   
+    <Grid Focusable="True"  MouseDown="Grid_MouseDown">
+        <Grid.Background>
+            <ImageBrush ImageSource="Images/tree.png" Stretch="Fill"/>
+        </Grid.Background>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -22,35 +30,37 @@
         </Grid.ColumnDefinitions>
 
         <!-- Alkalmazás címe -->
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Családfakutató Applikáció"
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontWeight="Bold" Text="Családfakutató Applikáció" Foreground="#fcfcfc"
            FontSize="24" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,20" Width="784"/>
 
         <!-- Felhasználó üdvözlése -->
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Üdvözöljük a Családfakutató Applikációban!"
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2"  Text="Üdvözöljük a Családfakutató Applikációban!" Foreground="#fcfcfc"
            FontSize="16" FontWeight="Bold" TextAlignment="Center" Margin="0,10,0,20"/>
 
         <!-- Leírás a bejelentkezéshez -->
-        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Kérjük jelentkezzen be fiókjába!"
+        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" FontWeight="Bold" Text="Kérjük jelentkezzen be fiókjába!" Foreground="#fcfcfc"
            TextAlignment="Center" Margin="0,10,0,10"/>
 
         <!-- Bal oldali címkék -->
 
-        <StackPanel Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="0,16,10,30" Width="201">
+        <StackPanel Grid.Row="3" Grid.Column="0"  HorizontalAlignment="Right" Margin="0,16,0,45" Width="213">
             <!-- Azonosító típus választó -->
-            <Label Content="Bejelentkezési mód váltása" Margin="0,5,0,2"/>
+            <Label Content="Bejelentkezési mód váltása" FontWeight="Bold" Margin="0,5,0,2" Foreground="#fcfcfc"/>
             <!-- Azonosító típus választó -->
-            <controls:ToggleSwitch x:Name="BejelentkezesiMod"
-                       OffContent="Felhasználónév:"
+            <controls:ToggleSwitch x:Name="BejelentkezesiMod"  Foreground="#fcfcfc"
+                       OffContent="Felhasználónév:" FontWeight="Bold"
                        OnContent="Email:"
-                       IsOn="False" Toggled="BejelentkezesiMod_Valtva" Margin="0,0,0,22" Width="156"/>
-            <Label Content="Jelszó:" Margin="0,0,0,10" FontSize="14" HorizontalContentAlignment="Left" Width="92"/>
-            <Label Content="Ha még nincs fiókja itt regisztrálhat:"  HorizontalContentAlignment="Left" Width="202" Height="28"/>
-            <TextBlock Width="184" Height="17"><Hyperlink NavigateUri="reg" RequestNavigate="Hyperlink_Regisztracio"><Run Text="Regisztráció"/></Hyperlink></TextBlock>
+                       IsOn="False" Toggled="BejelentkezesiMod_Valtva" Margin="0,0,0,22" Width="162"/>
+
+
+            <Label Content="Jelszó:"  FontWeight="Bold" Foreground="#fcfcfc" Margin="0,0,0,10" FontSize="14" HorizontalContentAlignment="Left" Width="109" />
+            <Label Content="Ha még nincs fiókja itt regisztrálhat:" FontWeight="Bold"  Foreground="#fcfcfc"  HorizontalContentAlignment="Left" Width="220" Height="28"/>
+            <TextBlock Width="184"  Height="17"><Hyperlink NavigateUri="reg" Foreground="#fcfcfc" RequestNavigate="Hyperlink_Regisztracio"><Run Text="Regisztráció" FontWeight="Bold" Foreground="#fcfcfc"/></Hyperlink></TextBlock>
         </StackPanel>
 
         <!-- Jobb oldali mezők -->
         <StackPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Margin="5,16,0,30" Width="370">
-            <Label Content="Felhasználói adatok" HorizontalContentAlignment="Left" Margin="48,5,0,8"/>
+            <Label Content="Felhasználói adatok" FontWeight="Bold" Foreground="#fcfcfc" HorizontalContentAlignment="Left" Margin="48,5,0,8"/>
             <TextBox x:Name="AzonositoTextBox"  Width="200" controls:TextBoxHelper.Watermark="Felhasználónév" TextChanged="BemenetiSzovegValtozas"  Margin="5,0,160,5"/>
             <!-- Hibaüzenet -->
             <TextBlock x:Name="HibaUzenetAzonosito" Foreground="Red" Margin="10,0,20,5"/>

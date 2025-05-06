@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:CsaladfaKutatoApp"
              mc:Ignorable="d" 
              d:DesignHeight="450" Width="275">
-    <StackPanel Background="#EEE">
+    <StackPanel Background="DarkBlue">
         <WrapPanel Margin="0,0,0,10">
-            <TextBlock Text="{Binding KNev}" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
+            <TextBlock Text="{Binding KNev}" Foreground="White" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
             <Button Click="TorlesButton_Click">Töröl</Button>
             <Button>Előző</Button>
             <Button Width="73">Következő</Button>
@@ -25,15 +25,15 @@
             <Image Source="pack://application:,,,/Images/account-grey-icon.png" Grid.Column="0" Grid.Row="0" Margin="20,0,12,-16" Grid.RowSpan="2"/>
             
             <WrapPanel Grid.Column="1" Grid.Row="0">
-                <TextBlock  Text="{Binding VNev}" TextAlignment="Left" Margin="0,0,5,0"/>
-                <TextBlock  Text="{Binding KNev}" TextAlignment="Right"/>
+                <TextBlock  Text="{Binding VNev}" Foreground="White" TextAlignment="Left" Margin="0,0,5,0"/>
+                <TextBlock  Text="{Binding KNev}" Foreground="White" TextAlignment="Right"/>
             </WrapPanel>
-            <TextBlock Grid.Column="1" Grid.Row="1" Text="Kor" TextAlignment="Left"/>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="Kor" Foreground="White" TextAlignment="Left"/>
         </Grid>
 
 
 
-        <TextBlock Text="Személy szerkesztése" FontWeight="Bold" Margin="10,10,0,5"/>
+        <TextBlock Text="Személy szerkesztése" FontWeight="Bold" Margin="10,10,0,5" Foreground="White"/>
         <WrapPanel>
             <Button Content="Részletek" Width="70" Margin="10,5,12,5"/>
             <Button Content="Hivatkozások" Margin="0,5,5,5"/>
@@ -43,7 +43,7 @@
             <Button Content="Mellékletek" Margin="5"/>
         </WrapPanel>
         <Button Content="Fotók és történet" Margin="10,5,5,5" Width="120" HorizontalAlignment="Left"/>
-        <TextBlock Text="Kapcsolat létrehozása" FontWeight="Bold" Margin="10,10,10,0" HorizontalAlignment="Left" TextAlignment="Center"/>
+        <TextBlock Text="Kapcsolat létrehozása" Foreground="White" FontWeight="Bold" Margin="10,10,10,0" HorizontalAlignment="Left" TextAlignment="Center"/>
         <ComboBox Margin="10,5,5,5" Width="156" HorizontalAlignment="Left" SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
             <ComboBoxItem Content="-- Válassz egy elemet --" IsEnabled="False"/>
             <ComboBoxItem>
@@ -104,12 +104,12 @@
             </ComboBoxItem>
         </ComboBox>
         <WrapPanel Margin="0,10,0,5">
-            <TextBlock Text="Család" FontWeight="Bold" Margin="10,5,20,5"/>
+            <TextBlock Text="Család" Foreground="White" FontWeight="Bold" Margin="10,5,20,5"/>
             <Button Content="Család adatok" Width="128"/>
         </WrapPanel>
 
         <WrapPanel Margin="0,5,0,5">
-            <TextBlock Text="Szűrés" FontWeight="Bold" Margin="10,5,20,5"/>
+            <TextBlock Text="Szűrés" Foreground="White" FontWeight="Bold" Margin="10,5,20,5"/>
             <TextBox Width="140" />
         </WrapPanel>
 
