@@ -65,11 +65,11 @@ namespace CsaladfaKutatoApp
                 }
             }
         }
-        private void Regisztracio_Click(object sender, RoutedEventArgs e)
+        private void Bejelentkezes_Click(object sender, RoutedEventArgs e)
         {
 
             // A "MainWindow" Frame-jén keresztül navigálunk
-            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new RegisztracioPage(_context));
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new BejelentkezesPage(_context));
             e.Handled = true;
         }
 
@@ -151,9 +151,13 @@ namespace CsaladfaKutatoApp
             }
         }
 
-        private void Megse_Click(object sender, RoutedEventArgs e)
+        private void Torles_Click(object sender, RoutedEventArgs e)
         {
-
+            KeresztnevTextBox.Text = "";
+            VezeteknevTextBox.Text = "";
+            SzuletesiDatumTextBox.Text = "";
+            SzuletesiTelepulesTextBox.Text = "";
+            SzuletesiOrszagTextBox.Text = "";
         }
     }
 }

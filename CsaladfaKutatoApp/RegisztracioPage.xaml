@@ -9,7 +9,12 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="RegisztracioPage">
 
-    <Grid Margin="20,25,21,3" Focusable="True" Background="Transparent" MouseDown="Grid_MouseDown">
+    <Grid Focusable="True"  MouseDown="Grid_MouseDown">
+
+        <Grid.Background>
+            <ImageBrush ImageSource="Images/tree.png" Stretch="Fill"/>
+        </Grid.Background>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -24,26 +29,26 @@
         </Grid.ColumnDefinitions>
 
         <!-- Alkalmazás címe -->
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Családfakutató Applikáció"
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Családfakutató Applikáció" FontWeight="Bold" Foreground="#fcfcfc"
                FontSize="24" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,20" Width="759"/>
 
         <!-- Regisztráció felület cím -->
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Regisztrációs felület"
-               FontSize="16" FontWeight="Bold" TextAlignment="Center" Margin="0,10,0,20"/>
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="Regisztrációs felület" FontWeight="Bold" Foreground="#fcfcfc"
+               FontSize="16"  TextAlignment="Center" Margin="0,10,0,20"/>
 
         <!-- Leírás a regisztrációhoz -->
-        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Kérjük az alábbi mezőket kitöltve regisztrálja fiókját!"
-               TextAlignment="Center" Margin="0,10"/>
+        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Kérjük az alábbi mezőket kitöltve regisztrálja fiókját!" FontWeight="Bold" Foreground="#fcfcfc"
+               TextAlignment="Center" Margin="0,10,0,10"/>
 
         <!-- Bal oldali címkék -->
-        <StackPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="0,40,10,0" Grid.RowSpan="2" Width="139">
-            <Label Content="Felhasználónév:" Margin="0,0,0,25"/>
-            <Label Content="E-mail cím:" Margin="0,0,0,25"/>
-            <Label Content="Jelszó:" Margin="0,0,0,25"/>
-            <Label Content="Jelszó még egyszer:" Margin="0,0,0,10"/>
-            <Label Content="Vissza a bejelentkezéshez:" Margin="0,0,0,0"/>
+        <StackPanel Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Background="#66000000" Margin="0,40,10,23" Grid.RowSpan="2" Width="153">
+            <Label Content="Felhasználónév:" Margin="0,0,0,25" FontWeight="Bold" Foreground="#fcfcfc"/>
+            <Label Content="E-mail cím:" Margin="0,0,0,25" FontWeight="Bold" Foreground="#fcfcfc"/>
+            <Label Content="Jelszó:" Margin="0,0,0,25" FontWeight="Bold" Foreground="#fcfcfc"/>
+            <Label Content="Jelszó még egyszer:" Margin="0,0,0,10" FontWeight="Bold" Foreground="#fcfcfc"/>
+            <Label Content="Vissza a bejelentkezéshez:" Margin="0,0,0,0" FontWeight="Bold" Foreground="#fcfcfc" Width="152"/>
             <TextBlock>
-            <Hyperlink NavigateUri="Log" RequestNavigate="Hyperlink_Bejelentkezes">Bejelentkezés</Hyperlink>
+            <Hyperlink NavigateUri="Log" RequestNavigate="Hyperlink_Bejelentkezes" FontWeight="Bold" Foreground="#fcfcfc">Bejelentkezés</Hyperlink>
             </TextBlock>
         </StackPanel>
 

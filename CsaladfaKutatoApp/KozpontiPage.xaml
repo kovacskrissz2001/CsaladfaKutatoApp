@@ -21,13 +21,13 @@
         </Grid.ColumnDefinitions>
 
         <!-- BAL oldali menü -->
-        <StackPanel Grid.Column="0" Background="#EEE" Orientation="Vertical" Margin="0,0,0,0">
-            <TextBlock Text="Menü" FontWeight="Bold" FontSize="16" Margin="10,10,10,20" TextAlignment="Center"/>
+        <StackPanel Grid.Column="0" Background="DarkBlue" Orientation="Vertical" Margin="0,0,0,0">
+            <TextBlock Text="Menü" FontWeight="Bold" Foreground="White" FontSize="16" Margin="10,10,10,20" TextAlignment="Center"/>
             <Button Content="Új családfa"  Padding="5" Margin="5,5,5,10" Width="110"/>
             <Button Content="Megnyitás" Margin="5,5,5,10" Padding="5" Width="110"/>
             <Button Content="Mentés" Margin="5,5,5,10" Padding="5" Width="110"/>
             <Button Content="Eszközök" Margin="5,5,5,10" Padding="5" Width="110"/>
-            <Button Content="Nyomtatás" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Exportálás PNG" Click="ExportPng_Click" Margin="5,5,5,10" Padding="5" Width="110"/>
             <Button Content="Segítség" Margin="5,5,5,10" Padding="5" Width="110"/>
             <Button Content="Kijelentkezés" Margin="5,5,5,10" Padding="5" Click="Kijelentkezes_Click" Width="110"/>
         </StackPanel>
@@ -64,7 +64,7 @@
         </Grid>
 
         <!-- JOBB oldali panel -->
-        <ContentControl x:Name="TartalomValto"  Grid.Column="2"  Margin="5,0,0,0"  Background="#EEE"/>
+        <ContentControl x:Name="TartalomValto"  Grid.Column="2"  Margin="5,0,0,0" />
 
 
     </Grid>

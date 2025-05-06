@@ -19,6 +19,7 @@ using CsaladfaKutatoApp.Models;
 using CsaladfaKutatoApp.Models.DTO;
 using System.IO;
 using CsaladfaKutatoApp.Segedeszkozok;
+using Microsoft.Win32;
 using System.Reflection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Cryptography;
@@ -72,9 +73,52 @@ namespace CsaladfaKutatoApp
             MegjelenitCsaladfat();
         }
 
+
         public void TartalomValtas(UserControl ujTartalom)
         {
             TartalomValto.Content = ujTartalom;
+        }
+
+        private void ExportPng_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "PNG képek (*.png)|*.png";
+            saveDialog.FileName = "csaladfa.png";
+            if (saveDialog.ShowDialog() == true)
+            {
+                MentsCanvasKepbe(CsaladfaVaszon, saveDialog.FileName);
+                MessageBox.Show("Mentés kész: " + saveDialog.FileName);
+            }
+        }
+
+        private void MentsCanvasKepbe(Canvas vaszon, string fajlNev)
+        {
+            // Eredeti méret megjegyzése
+            double eredetiSzelesseg = vaszon.ActualWidth;
+            double eredetiMagassag = vaszon.ActualHeight;
+
+            double width = 3000;
+            double height = 2000;
+            vaszon.Measure(new Size(width, height));
+            vaszon.Arrange(new Rect(0, 0, width, height));
+
+            var renderBitmap = new RenderTargetBitmap(
+                (int)vaszon.ActualWidth, (int)vaszon.ActualHeight,
+                96d, 96d, PixelFormats.Pbgra32);
+
+            renderBitmap.Render(vaszon);
+
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            using (var fileStream = new FileStream(fajlNev, FileMode.Create))
+            {
+                encoder.Save(fileStream);
+            }
+
+            // Vászon állapotának visszaállítása és újrarajzolás
+            vaszon.Arrange(new Rect(0, 0, eredetiSzelesseg, eredetiMagassag));
+            vaszon.UpdateLayout();
         }
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

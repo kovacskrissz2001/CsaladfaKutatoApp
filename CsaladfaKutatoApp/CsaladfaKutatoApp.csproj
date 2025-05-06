@@ -12,6 +12,10 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="Images\account-grey-icon.png" />
+    <None Remove="Images\csaladfa_alkalmazas_icon.ico" />
+    <None Remove="Images\pexels-tree.jpg" />
+    <None Remove="Images\tree-picture.png" />
+    <None Remove="Images\tree.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +50,15 @@
 
   <ItemGroup>
     <Resource Include="Images\account-grey-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\csaladfa_alkalmazas_icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\pexels-tree.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\tree.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

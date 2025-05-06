@@ -6,14 +6,15 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
-                <!-- MahApps.Metro fő stílus betöltése -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml"/>
-                
-                <!-- Téma és akcentusszín -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <SolidColorBrush x:Key="MahApps.Brushes.ToggleSwitch.FillOff" Color="White"/>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
