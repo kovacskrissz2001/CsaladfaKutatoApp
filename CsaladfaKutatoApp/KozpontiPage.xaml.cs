@@ -24,6 +24,7 @@ using System.Reflection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Cryptography;
 using System.Diagnostics.Eventing.Reader;
+using System.Collections.ObjectModel;
 
 
 namespace CsaladfaKutatoApp
@@ -46,6 +47,7 @@ namespace CsaladfaKutatoApp
         private Dictionary<int, int> partnerMapNoknek = new();
         private Dictionary<int, int> partnerMapFerfiaknak = new();
         private Dictionary<int?, double> xtavolsagMapElsoGyerekeknek = new();
+        public ObservableCollection<RajzoltSzemely>[] generaciosListakTomb;
         private const double BoxWidth = 100;
         private const double BoxHeight = 100;
         private const double SpacingX = 50;
@@ -336,11 +338,14 @@ namespace CsaladfaKutatoApp
                     GyermekekSzama = 0,
                     Apa = null,
                     Anya = null,
+                    Parja = null,
                     ApaRajzolElobb = null,
                     NotRajzoljunkElobbParbol = null,
-                    GyermekAzIlleto=false,
+                    GyermekAzIlleto = false,
                     ELsoGyerek = false,
-                    ELsoGyerekId = 0
+                    ELsoGyerekId = 0,
+                    Gyermekei = new List<RajzoltSzemely>(),
+                    Testverek = new List<RajzoltSzemely>()
                 })
                 .ToList();
         }
@@ -382,13 +387,13 @@ namespace CsaladfaKutatoApp
             int generaciokSzama = SzamoldKiGeneraciokat(szemelyek, kapcsolatok);
 
             //MessageBox.Show($"Generációk: {generaciokSzama}");
-            List<RajzoltSzemely>[] generaciosListakTomb = new List<RajzoltSzemely>[generaciokSzama];//tömb amely generációk szerint tárolja a rajzoltszemélyes listákat
+             generaciosListakTomb = new ObservableCollection<RajzoltSzemely>[generaciokSzama];//tömb amely generációk szerint tárolja a rajzoltszemélyes listákat
 
 
             //végigmegyünk az összes generáción, külön generációk szerint listákba gyűjtjük a rajzolt személyeket és ezeket a listákat egyesítjük egy nagy tömbben.
             for (int i = 0; i < generaciokSzama; i++)
             {
-                List<RajzoltSzemely> RajzolandoSzemelyek = new List<RajzoltSzemely>();
+                ObservableCollection<RajzoltSzemely> RajzolandoSzemelyek = new ObservableCollection<RajzoltSzemely>();
                 foreach (var szemely in szemelyek)
                 {
                     if (i == szemely.GeneracioSzint)
@@ -407,7 +412,7 @@ namespace CsaladfaKutatoApp
             //mielőtt kirajzolunk, rendezni kell a generációs listákat a megfelelő kirajzoláshoz
             //először szülő párosokat tároljuk, utána a, párokat, utána a szingliket
 
-
+            //Az összes betöltött rajzolt személy hozzáadásra került a szótárhoz
             Dictionary<int, RajzoltSzemely> szemelyDict = szemelyek.ToDictionary(s => s.Azonosito);
 
             // 👉 Női személyek, akinek van párja vagy gyermeke
@@ -451,11 +456,11 @@ namespace CsaladfaKutatoApp
                 .Select(s => s.Azonosito)
                 .ToList();
 
-            List<RajzoltSzemely> gyerekLista = new List<RajzoltSzemely>();//A családfában aktuális generációba tartozó szülők gyerekeinek listája
+            ObservableCollection<RajzoltSzemely> gyerekLista = new ObservableCollection<RajzoltSzemely>();//A családfában aktuális generációba tartozó szülők gyerekeinek listája
 
             for (int i = 0; i < generaciokSzama; i++)
             {
-                List<RajzoltSzemely> rendezettGeneraciosLista = new List<RajzoltSzemely>();
+                ObservableCollection<RajzoltSzemely> rendezettGeneraciosLista = new ObservableCollection<RajzoltSzemely>();
 
                 if (i == 0)
                 {
@@ -470,6 +475,12 @@ namespace CsaladfaKutatoApp
                                 if (anyaId == szemely.Azonosito)
                                 {
                                     if (!szemelyDict.TryGetValue(anyaId, out var anya)) continue;
+                                    if(anya == null)
+                                    {
+                                        anya = szemelyek.FirstOrDefault(k => k.Azonosito == anyaId);
+                                        szemelyDict[anyaId] = anya;
+                                    }
+                                       
                                     // Amelyik anyánál van gyerek, ott kellett partner is, megkeressük
                                     var partnerKapcsolat = kapcsolatok.FirstOrDefault(k => k.SzemelyId == anyaId && k.KapcsolatTipusa == "Partner");
                                     RajzoltSzemely partner = null;
@@ -477,9 +488,19 @@ namespace CsaladfaKutatoApp
                                     {
                                         partner = szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId]; // Biztonságosan lekérjük az objektumot
                                     }
+                                    else
+                                    {
+
+                                        partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.KapcsolodoSzemelyId);
+                                        szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId] = partner;
+                                    }
 
                                     rendezettGeneraciosLista.Add(anya);
                                     rendezettGeneraciosLista.Add(partner);
+
+                                    
+                                    anya.Parja = partner;
+                                    partner.Parja = anya;
 
                                     anya.NotRajzoljunkElobbParbol = true;
 
@@ -503,7 +524,15 @@ namespace CsaladfaKutatoApp
 
                                     foreach (var gyerekId in rendezettGyerekek)
                                     {
+
                                         if (!szemelyDict.TryGetValue(gyerekId, out var gyerek)) continue;
+                                        if(gyerek==null)
+                                        {
+                                            gyerek = szemelyek.FirstOrDefault(k => k.Azonosito == gyerekId);
+                                            szemelyDict[gyerekId] = gyerek;
+                                        }
+
+                                        
                                         gyerekLista.Add(gyerek);
 
                                         gyerek.Anya = anya;
@@ -513,7 +542,25 @@ namespace CsaladfaKutatoApp
                                         if (gyerek.Azonosito == legelsoGyerekId)
                                             gyerek.ELsoGyerek = true;
 
-                                        
+                                        anya.Gyermekei.Add(gyerek);
+                                        partner.Gyermekei.Add(gyerek);
+
+                                        //gyerek testvéreinek hozzáadása listához
+                                        foreach(var gyId in rendezettGyerekek)
+                                        {
+                                            if (gyId == gyerekId)
+                                                continue;
+
+                                            if (!szemelyDict.TryGetValue(gyId, out var testver)) continue;
+                                            if (testver == null)
+                                            {
+                                                testver = szemelyek.FirstOrDefault(k => k.Azonosito == gyId);
+                                                szemelyDict[gyId] = testver;
+                                            }
+                                            gyerek.Testverek.Add(testver);
+                                        }
+
+
                                     }
 
                                     szemelyMegtalalva = true;
@@ -521,45 +568,6 @@ namespace CsaladfaKutatoApp
                                 }
 
 
-                                // Szülők közös vonala
-                                /* RajzolVonalat(
-                                     Canvas.GetLeft(anyaBorder) + anyaBorder.ActualWidth + 105,
-                                     Canvas.GetTop(anyaBorder) + anyaBorder.ActualHeight + 100,
-                                     Canvas.GetLeft(partnerBorder) + partnerBorder.ActualWidth / 2,
-                                     Canvas.GetTop(partnerBorder) + partnerBorder.ActualHeight + 100
-                                 );
-
-                                 // Középpont kiszámítása
-                                 double szulokKozepX = (Canvas.GetLeft(anyaBorder) + anyaBorder.ActualWidth + 110 + Canvas.GetLeft(partnerBorder)) / 2;
-                                 double szulokKozepY = Canvas.GetTop(anyaBorder) + anyaBorder.ActualHeight + 105;
-                                */
-
-
-                                //.Where(id => szemelyDict.ContainsKey(id))
-                                //.Select(id => szemelyDict[id])
-                                /* double aktualisGyerekX = xKezdo;
-
-                                 foreach (var gyerek in gyerekek)
-                                 {
-
-
-                                     // Gyerekeket felfelé kötjük a szülői középponthoz
-                                     RajzolVonalat(
-                                         Canvas.GetLeft(gyerekBorder) + gyerekBorder.ActualWidth + 60,
-                                         Canvas.GetTop(gyerekBorder),
-                                         szulokKozepX,
-                                         szulokKozepY
-                                     );
-
-                                     aktualisGyerekX += gyerekXTav;
-                                 }
-
-                                 // Elcsúsztatjuk a következő párt
-
-
-                                 xKezdo = aktualisGyerekX + 400;
-
-                            }*/
                             }
 
                             if (nokCsakKapcsolatban != null && szemelyMegtalalva == false)
@@ -569,6 +577,11 @@ namespace CsaladfaKutatoApp
                                     if (noId == szemely.Azonosito)
                                     {
                                         if (!szemelyDict.TryGetValue(noId, out var noCsakParral)) continue;
+                                        if (noCsakParral == null)
+                                        {
+                                            noCsakParral = szemelyek.FirstOrDefault(k => k.Azonosito == noId);
+                                            szemelyDict[noId] = noCsakParral;
+                                        }
 
                                         //megkerestük a rekordokat amik ezek a nőkhöz tartoznak
                                         var partnerKapcsolat = kapcsolatok.FirstOrDefault(k => k.SzemelyId == noId && k.KapcsolatTipusa == "Partner");
@@ -577,9 +590,19 @@ namespace CsaladfaKutatoApp
                                         {
                                             partner = szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId]; // Biztonságosan lekérjük az objektumot
                                         }
+                                        else
+                                        {
+
+                                            partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.KapcsolodoSzemelyId);
+                                            szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId] = partner;
+                                        }
 
                                         rendezettGeneraciosLista.Add(noCsakParral);
                                         rendezettGeneraciosLista.Add(partner);
+
+                                        noCsakParral.Parja = partner;
+                                        partner.Parja = noCsakParral;
+
                                         noCsakParral.NotRajzoljunkElobbParbol = true;
                                         szemelyMegtalalva = true;
                                         break;
@@ -607,7 +630,7 @@ namespace CsaladfaKutatoApp
                         }
                     }
                 }
-                List<RajzoltSzemely> ujGyerekLista = new List<RajzoltSzemely>();
+                ObservableCollection<RajzoltSzemely> ujGyerekLista = new ObservableCollection<RajzoltSzemely>();
                 if (i > 0 && gyerekLista.Count != 0)//innentől kezdve akit ábrázolunk majd, mindenki mindenki valakinek a gyereke, vagy a családfában egy személynek a párja
                 {
 
@@ -623,6 +646,11 @@ namespace CsaladfaKutatoApp
                                 if (anyaId == szemely.Azonosito)
                                 {
                                     if (!szemelyDict.TryGetValue(anyaId, out var anya)) continue;
+                                    if (anya == null)
+                                    {
+                                        anya = szemelyek.FirstOrDefault(k => k.Azonosito == anyaId);
+                                        szemelyDict[anyaId] = anya;
+                                    }
                                     // Amelyik anyánál van gyerek, ott kellett partner is, megkeressük
                                     var partnerKapcsolat = kapcsolatok.FirstOrDefault(k => k.SzemelyId == anyaId && k.KapcsolatTipusa == "Partner");
                                     RajzoltSzemely partner = null;
@@ -630,9 +658,18 @@ namespace CsaladfaKutatoApp
                                     {
                                         partner = szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId]; // Biztonságosan lekérjük az objektumot
                                     }
+                                    else
+                                    {
+
+                                        partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.KapcsolodoSzemelyId);
+                                        szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId] = partner;
+                                    }
 
                                     rendezettGeneraciosLista.Add(anya);
                                     rendezettGeneraciosLista.Add(partner);
+
+                                    anya.Parja = partner;
+                                    partner.Parja = anya;
 
                                     anya.NotRajzoljunkElobbParbol = true;
 
@@ -657,7 +694,12 @@ namespace CsaladfaKutatoApp
                                     foreach (var gyerekId in rendezettGyerekek)
                                     {
                                         if (!szemelyDict.TryGetValue(gyerekId, out var gyerek)) continue;
-                                        ujGyerekLista.Add(gyerek);//itt nem a régi hanem az ujgyereklistahoz adunk
+                                        if (gyerek == null)
+                                        {
+                                            gyerek = szemelyek.FirstOrDefault(k => k.Azonosito == gyerekId);
+                                            szemelyDict[gyerekId] = gyerek;
+                                        }
+                                        ujGyerekLista.Add(gyerek);
 
                                         gyerek.Anya = anya;
                                         gyerek.Apa = partner;
@@ -665,8 +707,26 @@ namespace CsaladfaKutatoApp
                                         gyerek.GyermekAzIlleto = true;
                                         if (gyerek.Azonosito == legelsoGyerekId)
                                             gyerek.ELsoGyerek = true;
-                                    }
 
+                                        anya.Gyermekei.Add(gyerek);
+                                        partner.Gyermekei.Add(gyerek);
+
+                                        //gyerek testvéreinek hozzáadása listához
+                                        foreach (var gyId in rendezettGyerekek)
+                                        {
+                                            if (gyId == gyerekId)
+                                                continue;
+
+                                            if (!szemelyDict.TryGetValue(gyId, out var testver)) continue;
+                                            if (testver == null)
+                                            {
+                                                testver = szemelyek.FirstOrDefault(k => k.Azonosito == gyId);
+                                                szemelyDict[gyId] = testver;
+                                            }
+                                            gyerek.Testverek.Add(testver);
+                                        }
+                                    }
+                                    //testvéreket még itt hozzáadni a gyerekeikhez meg előző anyukánál a gyerekeknél is
                                     szemelyMegtalalva = true;
                                     break;
                                 }
@@ -679,6 +739,11 @@ namespace CsaladfaKutatoApp
                                 if (noId == szemely.Azonosito)
                                 {
                                     if (!szemelyDict.TryGetValue(noId, out var CsakHazasNo)) continue;
+                                    if (CsakHazasNo == null)
+                                    {
+                                        CsakHazasNo = szemelyek.FirstOrDefault(k => k.Azonosito == noId);
+                                        szemelyDict[noId] = CsakHazasNo;
+                                    }
 
                                     //megkerestük a rekordokat amik ezek a nőkhöz tartoznak
                                     var partnerKapcsolat = kapcsolatok.FirstOrDefault(k => k.SzemelyId == noId && k.KapcsolatTipusa == "Partner");
@@ -687,9 +752,19 @@ namespace CsaladfaKutatoApp
                                     {
                                         partner = szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId]; // Biztonságosan lekérjük az objektumot
                                     }
+                                    else
+                                    {
+
+                                        partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.KapcsolodoSzemelyId);
+                                        szemelyDict[partnerKapcsolat.KapcsolodoSzemelyId] = partner;
+                                    }
 
                                     rendezettGeneraciosLista.Add(CsakHazasNo);
                                     rendezettGeneraciosLista.Add(partner);
+
+                                    CsakHazasNo.Parja = partner;
+                                    partner.Parja = CsakHazasNo;
+
                                     CsakHazasNo.NotRajzoljunkElobbParbol = true;
                                     szemelyMegtalalva = true;
                                     break;
@@ -736,6 +811,11 @@ namespace CsaladfaKutatoApp
                                 if (ferfiId == szemely.Azonosito)
                                 {
                                     if (!szemelyDict.TryGetValue(ferfiId, out var CsakHazasFerfi)) continue;
+                                    if (CsakHazasFerfi == null)
+                                    {
+                                        CsakHazasFerfi = szemelyek.FirstOrDefault(k => k.Azonosito == ferfiId);
+                                        szemelyDict[ferfiId] = CsakHazasFerfi;
+                                    }
 
                                     //megkerestük a rekordokat amik ehhez a férfihoz tartoznak
                                     var partnerKapcsolat = kapcsolatok.FirstOrDefault(k => k.KapcsolodoSzemelyId == ferfiId && k.KapcsolatTipusa == "Partner");
@@ -745,9 +825,17 @@ namespace CsaladfaKutatoApp
                                     {
                                         partner = szemelyDict[partnerKapcsolat.SzemelyId]; // Biztonságosan lekérjük az objektumot
                                     }
+                                    else
+                                    {
+
+                                        partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.SzemelyId);
+                                        szemelyDict[partnerKapcsolat.SzemelyId] = partner;
+                                    }
 
                                     rendezettGeneraciosLista.Add(partner);
                                     rendezettGeneraciosLista.Add(CsakHazasFerfi);
+                                    CsakHazasFerfi.Parja = partner;
+                                    partner.Parja = CsakHazasFerfi;
                                     CsakHazasFerfi.NotRajzoljunkElobbParbol = false;
                                     szemelyMegtalalva = true;
                                     break;
@@ -792,6 +880,11 @@ namespace CsaladfaKutatoApp
                                 if (ferfiId == szemely.Azonosito)
                                 {
                                     if (!szemelyDict.TryGetValue(ferfiId, out var apa)) continue;
+                                    if (apa == null)
+                                    {
+                                        apa = szemelyek.FirstOrDefault(k => k.Azonosito == ferfiId);
+                                        szemelyDict[ferfiId] = apa;
+                                    }
 
                                     //megkerestük a rekordokat amik ehhez a férfihoz tartoznak
                                     var partnerKapcsolat = kapcsolatok.FirstOrDefault(k => k.KapcsolodoSzemelyId == ferfiId && k.KapcsolatTipusa == "Partner");
@@ -800,9 +893,16 @@ namespace CsaladfaKutatoApp
                                     {
                                         partner = szemelyDict[partnerKapcsolat.SzemelyId]; // Biztonságosan lekérjük az objektumot
                                     }
+                                    else
+                                    {
+                                        partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.SzemelyId);
+                                        szemelyDict[partnerKapcsolat.SzemelyId] = partner;
+                                    }
 
                                     rendezettGeneraciosLista.Add(partner);
                                     rendezettGeneraciosLista.Add(apa);
+                                    apa.Parja = partner;
+                                    partner.Parja = apa;
                                     apa.NotRajzoljunkElobbParbol = false;
 
 
@@ -826,13 +926,37 @@ namespace CsaladfaKutatoApp
                                     foreach (var gyerekId in rendezettGyerekek)
                                     {
                                         if (!szemelyDict.TryGetValue(gyerekId, out var gyerek)) continue;
-                                        ujGyerekLista.Add(gyerek);//itt nem a régi hanem az ujgyereklistahoz adunk
-                                        gyerek.Apa = apa;
+                                        if (gyerek == null)
+                                        {
+                                            gyerek = szemelyek.FirstOrDefault(k => k.Azonosito == gyerekId);
+                                            szemelyDict[gyerekId] = gyerek;
+                                        }
+                                        ujGyerekLista.Add(gyerek);
+
                                         gyerek.Anya = partner;
+                                        gyerek.Apa = apa;
                                         gyerek.ApaRajzolElobb = true;
                                         gyerek.GyermekAzIlleto = true;
                                         if (gyerek.Azonosito == legelsoGyerekId)
                                             gyerek.ELsoGyerek = true;
+
+                                        apa.Gyermekei.Add(gyerek);
+                                        partner.Gyermekei.Add(gyerek);
+
+                                        //gyerek testvéreinek hozzáadása listához
+                                        foreach (var gyId in rendezettGyerekek)
+                                        {
+                                            if (gyId == gyerekId)
+                                                continue;
+
+                                            if (!szemelyDict.TryGetValue(gyId, out var testver)) continue;
+                                            if (testver == null)
+                                            {
+                                                testver = szemelyek.FirstOrDefault(k => k.Azonosito == gyId);
+                                                szemelyDict[gyId] = testver;
+                                            }
+                                            gyerek.Testverek.Add(testver);
+                                        }
                                     }
 
                                     szemelyMegtalalva = true;

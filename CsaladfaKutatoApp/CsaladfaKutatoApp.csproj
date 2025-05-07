@@ -45,10 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Users\kivik\Downloads\automatic-graph-layout-master\automatic-graph-layout-master\GraphLayout\tools\GraphViewerGDI\GraphViewerGDI.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Images\account-grey-icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

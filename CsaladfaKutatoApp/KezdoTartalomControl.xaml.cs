@@ -51,6 +51,17 @@ namespace CsaladfaKutatoApp
 
         }
 
+        private void Kapcsolatok_Click(object sender, RoutedEventArgs e)
+        {
+            var control = new SzemelyKapcsolataiControl(KpOldal, _context, KpOldal.LegutobbKijeloltSzemely);
+            if (KpOldal.LegutobbKijeloltSzemely is not null)
+            {
+                control.DataContext = KpOldal.LegutobbKijeloltSzemely;
+
+            }
+            KpOldal.TartalomValtas(control);
+        }
+
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -159,5 +170,7 @@ namespace CsaladfaKutatoApp
                 }
             }
         }
+
+        
     }
 }

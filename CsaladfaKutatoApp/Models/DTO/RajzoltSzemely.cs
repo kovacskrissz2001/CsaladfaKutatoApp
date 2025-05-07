@@ -22,6 +22,9 @@ namespace CsaladfaKutatoApp.Models.DTO
         public int GyermekekSzama { get; set; } 
         public RajzoltSzemely? Apa {  get; set; }
         public RajzoltSzemely? Anya { get; set; }
+        public List<RajzoltSzemely>? Testverek { get; set; }
+        public RajzoltSzemely? Parja { get; set; }
+        public List<RajzoltSzemely>? Gyermekei { get; set; }
         public bool? ApaRajzolElobb { get; set; }
         public bool? NotRajzoljunkElobbParbol { get; set; }
         public bool GyermekAzIlleto {  get; set; }
