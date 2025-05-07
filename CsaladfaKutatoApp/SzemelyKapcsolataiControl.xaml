@@ -1,0 +1,134 @@
+﻿<UserControl x:Class="CsaladfaKutatoApp.SzemelyKapcsolataiControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CsaladfaKutatoApp"
+             mc:Ignorable="d" 
+              d:DesignHeight="450" Width="275">
+    <StackPanel PreviewMouseDown="Panel_PreviewMouseDown" Background="#EEE">
+        
+        <WrapPanel Margin="0,0,0,10">
+            <TextBlock Text="{Binding KNev}" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
+            <Button>Töröl</Button>
+            <Button>Előző</Button>
+            <Button Width="73">Következő</Button>
+        </WrapPanel>
+        <Grid Height="411">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="25"/>
+                
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="185"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Label Content="Édesanya:" Grid.Row="0" Grid.Column="0"/>
+            <TextBlock x:Name="AnyaMegjelenitTextBox" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom">
+                <Run Text="{Binding Anya.VNev, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Anya.KNev, Mode=OneWay}" />
+            </TextBlock>
+            <Label Content="Édesapa:" Grid.Row="1" Grid.Column="0"/>
+            <TextBlock x:Name="ApaMegjelenitTextBox" Grid.Row="1"  Grid.Column="1" VerticalAlignment="Bottom">
+                <Run Text="{Binding Apa.VNev, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Apa.KNev, Mode=OneWay}" />
+            </TextBlock>
+            <Label Content="Pár/Házastárs:" Grid.Row="2" Grid.Column="0"/>
+            <TextBlock x:Name="ParMegjelenitTextBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom">
+                <Run Text="{Binding Parja.VNev, Mode=OneWay}" />
+                <Run Text=" " />
+                <Run Text="{Binding Parja.KNev, Mode=OneWay}" />
+            </TextBlock>
+            <Label Content="Gyermekek:" Grid.Row="3" Grid.Column="0"/>
+            <!-- Alapértelmezett szöveg, ha nincs adat -->
+            <TextBlock Text="Nincs megjeleníthető elem." 
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="1">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Gyermekei.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Gyermekei.Count}" Value="1">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Gyermekei.Count}" Value="2">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <!-- vagy használhatsz egy konvertert a Count > 0 logikához -->
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <ItemsControl ItemsSource="{Binding Gyermekei}" Grid.Row="4" Grid.Column="1">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                        <Run Text="{Binding VNev}" />
+                        <Run Text=" " />
+                        <Run Text="{Binding KNev}" />
+                        </TextBlock>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Label Content="Testvérek:" Grid.Row="5" Grid.Column="0"/>
+            <!-- Alapértelmezett szöveg, ha nincs adat -->
+            <TextBlock Text="Nincs megjeleníthető elem." Grid.Row="5" Grid.Column="1"
+           HorizontalAlignment="Left"
+           VerticalAlignment="Bottom">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Testverek.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Testverek.Count}" Value="1">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Testverek.Count}" Value="2">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <!-- vagy használhatsz egy konvertert a Count > 0 logikához -->
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <ItemsControl ItemsSource="{Binding Testverek}" Grid.Row="6" Grid.Column="1">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                           <TextBlock>
+                            <Run Text="{Binding VNev}" />
+                            <Run Text=" " />
+                            <Run Text="{Binding KNev}" />
+                            </TextBlock>    
+                        </TextBlock>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Content="Vissza" Grid.Row="7" Grid.Column="0" Width="89" Click="Vissza_Click"/>
+
+        </Grid>
+        
+
+
+
+
+
+
+    </StackPanel>
+</UserControl>
