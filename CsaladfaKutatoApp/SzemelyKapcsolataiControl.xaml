@@ -6,13 +6,15 @@
              xmlns:local="clr-namespace:CsaladfaKutatoApp"
              mc:Ignorable="d" 
               d:DesignHeight="450" Width="275">
+
+
     <StackPanel PreviewMouseDown="Panel_PreviewMouseDown" Background="#EEE">
-        
+
         <WrapPanel Margin="0,0,0,10">
             <TextBlock Text="{Binding KNev}" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
             <Button>Töröl</Button>
-            <Button>Előző</Button>
-            <Button Width="73">Következő</Button>
+            <Button Click="ElozoButton_Click">Előző</Button>
+            <Button Click="KovetkezoButton_Click" Width="73">Következő</Button>
         </WrapPanel>
         <Grid Height="411">
             <Grid.RowDefinitions>
@@ -24,7 +26,7 @@
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="25"/>
-                
+
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -34,41 +36,97 @@
 
 
             <Label Content="Édesanya:" Grid.Row="0" Grid.Column="0"/>
-            <TextBlock x:Name="AnyaMegjelenitTextBox" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom">
+            <TextBlock x:Name="AnyaMegjelenitTextBox"  Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" Height="15" Margin="0,10,0,0">
                 <Run Text="{Binding Anya.VNev, Mode=OneWay}" />
                 <Run Text=" " />
                 <Run Text="{Binding Anya.KNev, Mode=OneWay}" />
             </TextBlock>
+            <TextBlock Text="Nincs megjeleníthető személy."
+           Grid.Row="0" Grid.Column="1"
+           HorizontalAlignment="Left"
+           VerticalAlignment="Bottom">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Anya}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
             <Label Content="Édesapa:" Grid.Row="1" Grid.Column="0"/>
-            <TextBlock x:Name="ApaMegjelenitTextBox" Grid.Row="1"  Grid.Column="1" VerticalAlignment="Bottom">
+            <TextBlock x:Name="ApaMegjelenitTextBox" Grid.Row="1"  Grid.Column="1" VerticalAlignment="Bottom" Height="15">
                 <Run Text="{Binding Apa.VNev, Mode=OneWay}" />
                 <Run Text=" " />
                 <Run Text="{Binding Apa.KNev, Mode=OneWay}" />
             </TextBlock>
-            <Label Content="Pár/Házastárs:" Grid.Row="2" Grid.Column="0"/>
-            <TextBlock x:Name="ParMegjelenitTextBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom">
+            <TextBlock Text="Nincs megjeleníthető személy."
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="1" >
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Apa}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+
+            <Label Content="Pár/Házastárs:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="ParMegjelenitTextBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Height="19" RenderTransformOrigin="0.5,0.5" Margin="0,6,0,0">
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform>
                 <Run Text="{Binding Parja.VNev, Mode=OneWay}" />
                 <Run Text=" " />
                 <Run Text="{Binding Parja.KNev, Mode=OneWay}" />
             </TextBlock>
-            <Label Content="Gyermekek:" Grid.Row="3" Grid.Column="0"/>
-            <!-- Alapértelmezett szöveg, ha nincs adat -->
-            <TextBlock Text="Nincs megjeleníthető elem." 
-            HorizontalAlignment="Left"
-            VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="1">
+            <TextBlock Text="Nincs megjeleníthető személy."
+           HorizontalAlignment="Left"
+           VerticalAlignment="Bottom" Grid.Row="2" Grid.Column="1" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Parja}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <Label Content="Gyermekek:" Grid.Row="3" Grid.Column="0"/>
+            <!-- Alapértelmezett szöveg, ha nincs adat -->
+            <TextBlock Text="Nincs megjeleníthető személy." 
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="1" Height="21" RenderTransformOrigin="0.5,0.5" Width="180">
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="0.263"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform>
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Gyermekei.Count}" Value="0">
                                 <Setter Property="Visibility" Value="Visible"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Gyermekei.Count}" Value="1">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Gyermekei.Count}" Value="2">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                            <!-- vagy használhatsz egy konvertert a Count > 0 logikához -->
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
@@ -87,22 +145,16 @@
 
             <Label Content="Testvérek:" Grid.Row="5" Grid.Column="0"/>
             <!-- Alapértelmezett szöveg, ha nincs adat -->
-            <TextBlock Text="Nincs megjeleníthető elem." Grid.Row="5" Grid.Column="1"
+            <TextBlock Text="Nincs megjeleníthető személy." Grid.Row="5" Grid.Column="1"
            HorizontalAlignment="Left"
-           VerticalAlignment="Bottom">
+           VerticalAlignment="Bottom" Height="20" Margin="0,0,0,130" Grid.RowSpan="2">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Testverek.Count}" Value="0">
                                 <Setter Property="Visibility" Value="Visible"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Testverek.Count}" Value="1">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Testverek.Count}" Value="2">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                            <!-- vagy használhatsz egy konvertert a Count > 0 logikához -->
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
@@ -123,7 +175,7 @@
             <Button Content="Vissza" Grid.Row="7" Grid.Column="0" Width="89" Click="Vissza_Click"/>
 
         </Grid>
-        
+
 
 
 

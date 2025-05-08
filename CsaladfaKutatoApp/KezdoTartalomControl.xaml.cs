@@ -28,6 +28,9 @@ namespace CsaladfaKutatoApp
     {
         private KozpontiPage KpOldal;
         private readonly CsaladfaAdatbazisContext _context;
+        private int? felhasznaloId = ((MainWindow)Application.Current.MainWindow).BejelentkezettFelhasznaloId;
+
+
 
         public KezdoTartalomControl(KozpontiPage Szulo, CsaladfaAdatbazisContext context)
         {
@@ -67,14 +70,28 @@ namespace CsaladfaKutatoApp
 
         }
 
-        private void NemKapcsolodoHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Nem kapcsolódó személy");
-        private void ApaHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Apa");
-        private void AnyaHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Anya");
-        private void LanyaHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Lány gyermek");
-        private void FiaHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Fiú gyermek");
-        private void PartnerHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Partner");
-        private void LanyTestverHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Lány testvér");
-        private void FiuTestverHozzaadasa_Click(object sender, RoutedEventArgs e) => NavigalKapcsolodoLetrehoz("Fiú testvér");
+        private void NemKapcsolodoHozzaadasa_Click(object sender, RoutedEventArgs e)
+        {
+           
+            KpOldal.LegutobbiKapcsolatTipus = "Nem kapcsolódó személy";
+            NavigalKapcsolodoLetrehoz("Nem kapcsolódó személy");
+        }
+
+        private void LanyaHozzaadasa_Click(object sender, RoutedEventArgs e) {
+            KpOldal.LegutobbiKapcsolatTipus = "Lány gyermek";
+            NavigalKapcsolodoLetrehoz("Lány gyermek"); 
+        }
+        private void FiaHozzaadasa_Click(object sender, RoutedEventArgs e)
+        {
+            KpOldal.LegutobbiKapcsolatTipus = "Fiú gyermek";
+            NavigalKapcsolodoLetrehoz("Fiú gyermek");
+        }
+        private void PartnerHozzaadasa_Click(object sender, RoutedEventArgs e)
+        {
+            KpOldal.LegutobbiKapcsolatTipus = "Partner";
+            NavigalKapcsolodoLetrehoz("Partner");
+        }
+        
 
 
 
@@ -171,6 +188,74 @@ namespace CsaladfaKutatoApp
             }
         }
 
-        
+        private void KovetkezoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Új kijelölés: következő kisebb ID-jú személy
+            var kovetkezoSzemely = KpOldal.RajzoltSzemelyek
+                .Where(s => s.Azonosito > KpOldal.LegutobbKijeloltSzemely.Azonosito)
+                .OrderBy(s => s.Azonosito)
+                .FirstOrDefault();
+
+
+            // Aktuális KezdoTartalomControl elérése
+            if (KpOldal.TartalomValto.Content is KezdoTartalomControl aktivTartalom)
+            {
+                if (kovetkezoSzemely != null)
+                {
+                    // Előző kijelölés eltüntetése
+                    if (KpOldal.kijeloltBorder != null)
+                        KpOldal.kijeloltBorder.BorderBrush = Brushes.Transparent;
+
+                    KpOldal.LegutobbKijeloltSzemely = kovetkezoSzemely;
+
+                    // Kijelölés vizuális frissítése (border szín változtatással)
+
+                    if (KpOldal.LegutobbKijeloltSzemely != null && KpOldal.LegutobbKijeloltSzemely.UIElem != null && KpOldal.LegutobbKijeloltSzemely?.UIElem is Border ujBorder)
+                    {
+                        ujBorder.BorderBrush = Brushes.OrangeRed;
+                        KpOldal.kijeloltBorder = ujBorder;
+                    }
+                    aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+
+                }
+            }
+
+        }
+
+        private void ElozoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Új kijelölés: következő kisebb ID-jú személy
+            var elozoSzemely = 
+            KpOldal.RajzoltSzemelyek
+                .Where(s => s.Azonosito < KpOldal.LegutobbKijeloltSzemely.Azonosito)
+                .OrderByDescending(s => s.Azonosito)
+                .FirstOrDefault();
+
+
+            // Aktuális KezdoTartalomControl elérése
+            if (KpOldal.TartalomValto.Content is KezdoTartalomControl aktivTartalom)
+                {
+                    if (elozoSzemely != null)
+                    {
+                        // Előző kijelölés eltüntetése
+                        if (KpOldal.kijeloltBorder != null)
+                            KpOldal.kijeloltBorder.BorderBrush = Brushes.Transparent;
+
+                        KpOldal.LegutobbKijeloltSzemely = elozoSzemely;
+
+                        // Kijelölés vizuális frissítése (border szín változtatással)
+
+                        if (KpOldal.LegutobbKijeloltSzemely != null && KpOldal.LegutobbKijeloltSzemely.UIElem != null && KpOldal.LegutobbKijeloltSzemely?.UIElem is Border ujBorder)
+                        {
+                            ujBorder.BorderBrush = Brushes.OrangeRed;
+                            KpOldal.kijeloltBorder = ujBorder;
+                        }
+                        aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                    }
+                    
+             }
+            
+            
+        }
     }
 }
