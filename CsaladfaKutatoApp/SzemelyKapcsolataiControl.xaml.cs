@@ -1,5 +1,6 @@
 ﻿using CsaladfaKutatoApp.Models;
 using CsaladfaKutatoApp.Models.DTO;
+using CsaladfaKutatoApp.Segedeszkozok;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -127,6 +128,13 @@ namespace CsaladfaKutatoApp
 
                 }
             }
+        }
+
+        private void TorlesButton_Click(object sender, RoutedEventArgs e)
+        {
+            Torles torol = new Torles();
+
+            torol.TorolSzemelyt(KpOldal);
         }
     }
 }

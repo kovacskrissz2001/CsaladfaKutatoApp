@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace CsaladfaKutatoApp.Models.DTO
 {
@@ -30,5 +31,8 @@ namespace CsaladfaKutatoApp.Models.DTO
         public bool GyermekAzIlleto {  get; set; }
         public bool? ELsoGyerek {  get; set; }//A szülő első gyereke-e a személy
         public int? ELsoGyerekId { get; set; }//A személy első gyerekének az azonosítója
+        public Line? Gyermek_Szulo_Vonal {  get; set; }
+        public Line? Parkapcsolat_Vonal { get; set; }
+
     }
 }

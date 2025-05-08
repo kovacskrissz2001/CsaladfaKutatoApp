@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.Common;
 using CsaladfaKutatoApp.Models.DTO;
+using CsaladfaKutatoApp.Segedeszkozok;
 
 namespace CsaladfaKutatoApp
 {
@@ -173,14 +174,29 @@ namespace CsaladfaKutatoApp
         }
 
         //Ellenőrizzük hogy tartozik-e már az adott szülőhöz konkrét gyerek.
-        public bool VaneMarIlyenGyerek(int szemelyAzonosito, int kapcsSzemelyAzonosito)
+        public bool VaneMarIlyenGyerek(int kapcsSzemelyAzonosito)
         {
             bool vanKapcsolat = _context.Kapcsolatoks
-            .Any(k => k.SzemelyId == szemelyAzonosito && k.KapcsolodoSzemelyId == kapcsSzemelyAzonosito && k.KapcsolatTipusa == "Gyermek");
+            .Any(k =>  k.KapcsolodoSzemelyId == kapcsSzemelyAzonosito && k.KapcsolatTipusa == "Gyermek");
 
             return vanKapcsolat;
 
         }
+
+        public bool RokonokVajonASzemelyek(int noId, int ferfiId)
+        {
+
+            bool rokonok=false;
+            bool noCsaladtagE = _context.Kapcsolatoks
+            .Any(k => k.KapcsolodoSzemelyId == noId && k.KapcsolatTipusa == "Gyermek");
+            bool ferfiCsaladtagE = _context.Kapcsolatoks
+            .Any(k => k.KapcsolodoSzemelyId == ferfiId && k.KapcsolatTipusa == "Gyermek");
+
+            if (noCsaladtagE == true && ferfiCsaladtagE == true)
+                rokonok = true;
+            return rokonok;
+        }
+
         public Helyszinek ujHelyszinVisszaad()
         {
             var ujHelyszin = new Helyszinek
@@ -283,11 +299,7 @@ namespace CsaladfaKutatoApp
                 s.Helyszin.SzuletesiOrszag == SzuletesiOrszagTextBox.Text.Trim() &&
                 s.Helyszin.SzuletesiTelepules == SzuletesiTelepulesTextBox.Text.Trim());
 
-            //ellenőrizni kell,hogy a családfában már szereplő embereket ne lehessen hozzáadni senkihez
-            //Ezt úgy érjük el hogy ellenőrizzük van e már a személyhet tartozó rekord Gyermek típussa, úgy hogy ő a KapcsSzemelyId
-            //azt már ellenőrizük hogy az adott személy meglévő gyrekét ne adhassuk újra a szülőhöz
-            //azt is ellenőrizni kell hogy más gyerekét se
-            //illetve azt is ellenőrizni kell hogy rokonokat ne adhassunk parnerként egyáshoz
+            
 
             try
             {
@@ -362,10 +374,10 @@ namespace CsaladfaKutatoApp
                         //  Kapcsolat létrehozása
                         /*
                          Ell kell dönteni hogy partnert vagy gyereket adunk hozzá és úgy állítjuk be.
-                        A már korábban létrehozott id-kat használjuk ez megvan.
+                        A már korábban létrehozott id-kat használjuk .
 
                          */
-                        //bonyolódik, csak egy irányba adhatunk tovább, pl nőnek partner és gyerek, először partner
+                        //Csak egy irányba adhatunk tovább, pl nőnek partner és gyerek, először partner
 
                         // Nőhöz adjuk hozzá a férfit.
                         if (_kapcsolatTipus == "Partner" && ujSzemelyNeme == "Férfi" && _legutobbKijeloltSzemely.Nem != null && _legutobbKijeloltSzemely.Nem == "Nő")
@@ -413,23 +425,39 @@ namespace CsaladfaKutatoApp
                             // ellenőrzés, létre lett-e hozva már kapcsolat a nőhöz és a férfihoz, csak a nőhöz tartozik rekord de a rekord egyik mzőjében szerepelhet a férfi
                             bool vanKapcsolatNo = VaneMarParkapcsolatNo(_legutobbKijeloltSzemely.Azonosito);
                             bool vanKapcsolatFerfi = VaneMarParkapcsolatFerfi(ujSzemely.SzemelyId);
+                            bool rokonokVajon = RokonokVajonASzemelyek(_legutobbKijeloltSzemely.Azonosito, ujSzemely.SzemelyId);//először a nő, aztán a férfi
 
                             //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
+                            
                             if (vanKapcsolatNo == false && vanKapcsolatFerfi == false)
                             {
-                            kapcsolatTipusAdatbazisba = "Partner";
-                            var ujKapcsolat = new Kapcsolatok
+                                if (rokonokVajon == false)
                                 {
-                                    SzemelyId = _legutobbKijeloltSzemely.Azonosito,// kijelölt személy ID
-                                    KapcsolodoSzemelyId = ujSzemely.SzemelyId, // új személy  ID
-                                    KapcsolatTipusa = kapcsolatTipusAdatbazisba
-                                };
-                            _context.Kapcsolatoks.Add(ujKapcsolat);
-                            _context.SaveChanges();
+                                    kapcsolatTipusAdatbazisba = "Partner";
+                                    var ujKapcsolat = new Kapcsolatok
+                                    {
+                                        SzemelyId = _legutobbKijeloltSzemely.Azonosito,// kijelölt személy ID
+                                        KapcsolodoSzemelyId = ujSzemely.SzemelyId, // új személy  ID
+                                        KapcsolatTipusa = kapcsolatTipusAdatbazisba
+                                    };
+                                    _context.Kapcsolatoks.Add(ujKapcsolat);
+                                    _context.SaveChanges();
 
-                            MessageBox.Show("A személy vagy kapcsolat sikeresen hozzáadásra került!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    MessageBox.Show("A személy vagy kapcsolat sikeresen hozzáadásra került!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                            ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, _felhasznaloId));
+                                    ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, _felhasznaloId));
+
+
+                                }
+                                else 
+                                {
+                                    MessageBox.Show("Hiba történt a mentés során:\n A megadott személyek nem adhatók össze, mert mindketten családtagok.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                    if (letezikSzemely == false)
+                                    {
+                                        TorolUjonnanLetrehozottSzemelytEsHelyszint(ujSzemely, ujHelyszin);
+                                    }
+                                }
+                                
                             }
                             else
                             {
@@ -440,10 +468,7 @@ namespace CsaladfaKutatoApp
                                 }
                             }
 
-
-
-                            //TODO kódaba is elmentjük a férfi adatait, pl ha a nő partnernek vette fel a férfit, akkor
-                            // a férfi automatikusan kapja meg partnernek a nőt kódban és ugyanez a logika a gyerekeknél is, a nőket adatbázisból keressük ki
+                            
                         }
 
 
@@ -492,25 +517,38 @@ namespace CsaladfaKutatoApp
 
                         //Mivel csak egy irányba tárolunk kapcsolatokat az adatbázisban ezért mindig a nők a viszonyítási pont, az ő adataikat tároljuk pl, partner, gyerek
 
-                        // ellenőrzés, létre lett-e hozva már kapcsolat a nőhöz és a férfihoz
-                        bool vanKapcsolatNonek = VaneMarParkapcsolatNo(ujSzemely.SzemelyId);
+                            // ellenőrzés, létre lett-e hozva már kapcsolat a nőhöz és a férfihoz
+                            bool vanKapcsolatNonek = VaneMarParkapcsolatNo(ujSzemely.SzemelyId);
                             bool vanKapcsolatFerfi = VaneMarParkapcsolatFerfi(_legutobbKijeloltSzemely.Azonosito);
-                            //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
+                            bool rokonokVajon = RokonokVajonASzemelyek(ujSzemely.SzemelyId, _legutobbKijeloltSzemely.Azonosito);//először a nő aztán a férfi
+                                                                                                                            //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
                             if (vanKapcsolatNonek == false && vanKapcsolatFerfi == false)
                             {
-                            kapcsolatTipusAdatbazisba = "Partner";
-                            var ujKapcsolat = new Kapcsolatok
+                                if (rokonokVajon == false)
                                 {
-                                    // A nőhöz mentjük a férfit annak ellenére hogy a férfi a személy akihez a nőt adjuk partnerként, mert egy irányba tárolunk adatokat az egyszerűség kedvéért.
-                                    SzemelyId = ujSzemely.SzemelyId, // új személy  ID
-                                    KapcsolodoSzemelyId = _legutobbKijeloltSzemely.Azonosito, // kijelölt személy ID
-                                    KapcsolatTipusa = kapcsolatTipusAdatbazisba
-                                };
-                            _context.Kapcsolatoks.Add(ujKapcsolat);
-                            _context.SaveChanges();
-                            MessageBox.Show("A személy vagy kapcsolat sikeresen hozzáadásra került!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    kapcsolatTipusAdatbazisba = "Partner";
+                                    var ujKapcsolat = new Kapcsolatok
+                                    {
+                                        // A nőhöz mentjük a férfit annak ellenére hogy a férfi a személy akihez a nőt adjuk partnerként, mert egy irányba tárolunk adatokat az egyszerűség kedvéért.
+                                        SzemelyId = ujSzemely.SzemelyId, // új személy  ID
+                                        KapcsolodoSzemelyId = _legutobbKijeloltSzemely.Azonosito, // kijelölt személy ID
+                                        KapcsolatTipusa = kapcsolatTipusAdatbazisba
+                                    };
+                                    _context.Kapcsolatoks.Add(ujKapcsolat);
+                                    _context.SaveChanges();
+                                    MessageBox.Show("A személy vagy kapcsolat sikeresen hozzáadásra került!", "Siker", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                            ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, _felhasznaloId));
+                                    ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, _felhasznaloId));
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Hiba történt a mentés során:\n A megadott személyek nem adhatók össze, mert mindketten családtagok.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                    if (letezikSzemely == false)
+                                    {
+                                        TorolUjonnanLetrehozottSzemelytEsHelyszint(ujSzemely, ujHelyszin);
+                                    }
+                                }
+
                         }
                             else
                             {
@@ -521,22 +559,18 @@ namespace CsaladfaKutatoApp
                                 }
                             }
 
-                            //TODO kódba férfi adatai mentés
+                            
                         }
 
                         // a gyerekek hozzáadásához először meg kell nézni, hogy az illetőnek van-e már partnere a Kapcsolatok táblában
                         // ha igen, akkor adhatunk hozzá gyereket
 
-                        
-
-                       
-                        //TESZTELVE, JÓ
 
                         //Anyukához adjuk hozzá a lány gyereket
                         if (_kapcsolatTipus == "Lány gyermek" && _legutobbKijeloltSzemely.Nem != null && _legutobbKijeloltSzemely.Nem == "Nő")
                         {
 
-                        //TODO: megcsinálni hogy a gyerek születési dátuma legalább kb 11 évvel nagyobb legyen
+                      
 
                         bool vanePartner = VaneMarParkapcsolatNo(_legutobbKijeloltSzemely.Azonosito);
                             if (vanePartner == true)//ebben az esetben van féri partnere a nőnek tehát hozzáadhatunk lány gyereket is
@@ -584,7 +618,7 @@ namespace CsaladfaKutatoApp
                             }
 
                             // ellenőrzés, létre lett-e hozva már gyermek kapcsolat a nőhöz
-                            bool vanKapcsolat = VaneMarIlyenGyerek(_legutobbKijeloltSzemely.Azonosito, ujSzemely.SzemelyId);// azért kell mind két azonosító, mert így egy konkrét gyerekre fókuszálunk
+                            bool vanKapcsolat = VaneMarIlyenGyerek(ujSzemely.SzemelyId);// azért kell mind két azonosító, mert így egy konkrét gyerekre fókuszálunk
 
                                 //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
                                 if (vanKapcsolat == false)
@@ -606,7 +640,7 @@ namespace CsaladfaKutatoApp
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermeke a megadott személynek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
                                 //Ha mégis van már ilyen gyereke a nőnek akkor ki kell törölni a szemely és hely rekordokat mik újonnan kerültek be az adatbázisba és korábban nem léteztek
                                     if (letezikSzemely == false)
                                     {
@@ -614,7 +648,7 @@ namespace CsaladfaKutatoApp
                                     }
                                 }
 
-                                //TODO lánya gyermekhez felvenni anyját kódban
+                                
 
                             }
                             else
@@ -672,7 +706,7 @@ namespace CsaladfaKutatoApp
                                 return;
                             }
                             // ellenőrzés, létre lett-e hozva már kapcsolat a nőhöz, azért csak a nőt ellerőrizzük mert az adatbázisban a nőkhöz adunk hozzá gyereket és partnert az egyszerűség kedvéért
-                            bool vanKapcsolat = VaneMarIlyenGyerek(_legutobbKijeloltSzemely.Azonosito, ujSzemely.SzemelyId);
+                            bool vanKapcsolat = VaneMarIlyenGyerek(ujSzemely.SzemelyId);
 
                                 //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
                                 if (vanKapcsolat == false)
@@ -693,14 +727,14 @@ namespace CsaladfaKutatoApp
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermeke a megadott személynek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
                                     if (letezikSzemely == false)
                                     {
                                         TorolUjonnanLetrehozottSzemelytEsHelyszint(ujSzemely, ujHelyszin);
                                     }
                                 }
 
-                                //TODO fiú gyermekhez hozzáadni az anyját kódban
+                                
                             }
                             else
                             {
@@ -766,7 +800,7 @@ namespace CsaladfaKutatoApp
 
 
                                 // Ellenőrzés, létre lett-e hozva már gyermek kapcsolat a nőhöz aki a férfi partnere. Azért csak a nőt ellerőrizzük mert az adatbázisban a nőkhöz adunk hozzá gyereket és partnert az egyszerűség kedvéért
-                                bool vanKapcsolat = VaneMarIlyenGyerek(feleseg_SzemelyId, ujSzemely.SzemelyId);
+                                bool vanKapcsolat = VaneMarIlyenGyerek(ujSzemely.SzemelyId);
 
                                 //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
                                 if (vanKapcsolat == false)
@@ -787,14 +821,13 @@ namespace CsaladfaKutatoApp
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermeke a megadott személynek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
                                     if (letezikSzemely == false)
                                     {
                                         TorolUjonnanLetrehozottSzemelytEsHelyszint(ujSzemely, ujHelyszin);
                                     }
                                 }
 
-                                //TODO fiú gyermekhez hozzáadni az apját kódban
                             }
                             else
                             {
@@ -859,7 +892,7 @@ namespace CsaladfaKutatoApp
 
 
                                 // Ellenőrzés, létre lett-e hozva már gyermek kapcsolat a nőhöz aki a férfi partnere. Azért csak a nőt ellerőrizzük mert az adatbázisban a nőkhöz adunk hozzá gyereket és partnert az egyszerűség kedvéért.
-                                bool vanKapcsolat = VaneMarIlyenGyerek(feleseg_SzemelyId, ujSzemely.SzemelyId);
+                                bool vanKapcsolat = VaneMarIlyenGyerek(ujSzemely.SzemelyId);
 
                                 //ha nincs még az adatbázisban ilyen rekord akkor hozzáadjuk
                                 if (vanKapcsolat == false)
@@ -880,14 +913,14 @@ namespace CsaladfaKutatoApp
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermeke a megadott személynek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                    MessageBox.Show("Hiba történt a mentés során:\n Szerepel már ez a gyermek a családfában.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
                                     if (letezikSzemely == false)
                                     {
                                         TorolUjonnanLetrehozottSzemelytEsHelyszint(ujSzemely, ujHelyszin);
                                     }
                             }
 
-                                //TODO lány gyermekhez hozzáadni az apját kódban
+                                
                             }
                             else
                             {
@@ -1023,6 +1056,13 @@ namespace CsaladfaKutatoApp
 
             }
 
+        }
+
+        private void TorlesButton_Click(object sender, RoutedEventArgs e)
+        {
+            Torles torol = new Torles();
+
+            torol.TorolSzemelyt(KpOldal);
         }
     }
 }
