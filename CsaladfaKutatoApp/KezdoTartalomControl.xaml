@@ -10,8 +10,8 @@
         <WrapPanel Margin="0,0,0,10">
             <TextBlock Text="{Binding KNev}" Foreground="White" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
             <Button Click="TorlesButton_Click">Töröl</Button>
-            <Button>Előző</Button>
-            <Button Width="73">Következő</Button>
+            <Button Click="ElozoButton_Click">Előző</Button>
+            <Button Click="KovetkezoButton_Click" Width="73">Következő</Button>
         </WrapPanel>
         <Grid  Margin="0,0,0,10">
             <Grid.RowDefinitions>

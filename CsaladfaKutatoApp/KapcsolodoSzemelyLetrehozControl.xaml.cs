@@ -112,13 +112,13 @@ namespace CsaladfaKutatoApp
             KapcsolodoSzemelyTextBlock.Text = tipus+" "+"hozzáadása";
 
             // RadioButton logika
-            if (tipus == "Apa" || tipus == "Fiú gyermek" || tipus == "Fiú testvér")
+            if (tipus == "Fiú gyermek")
             {
                 FerfiRadioButton.IsChecked = true;
                 FerfiRadioButton.IsEnabled = false;
                 NoRadioButton.IsEnabled = false;
             }
-            else if (tipus == "Anya" || tipus == "Lány gyermek" || tipus == "Lány testvér")
+            else if ( tipus == "Lány gyermek" )
             {
                 NoRadioButton.IsChecked = true;
                 FerfiRadioButton.IsEnabled = false;
@@ -934,6 +934,95 @@ namespace CsaladfaKutatoApp
             OrokNyugalomHelyeOrszagTextBox.IsEnabled = true;
             OrokNyugalomHelyeRegioTextBox.IsEnabled = true;
             OrokNyugalomHelyeTelepulesTextBox.IsEnabled = true;
+        }
+
+        private void ElozoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Új kijelölés: következő kisebb ID-jú személy
+            var elozoSzemely = KpOldal.RajzoltSzemelyek
+                .Where(s => s.Azonosito < KpOldal.LegutobbKijeloltSzemely.Azonosito)
+                .OrderByDescending(s => s.Azonosito)
+                .FirstOrDefault();
+
+            if (KpOldal.TartalomValto.Content is KapcsolodoSzemelyLetrehozControl aktivTartalom)
+            {
+                if (elozoSzemely != null)
+                {
+
+                    if (KpOldal.LegutobbiKapcsolatTipus != "")
+                    {
+                        // Előző kijelölés eltüntetése
+                        if (KpOldal.kijeloltBorder != null)
+                            KpOldal.kijeloltBorder.BorderBrush = Brushes.Transparent;
+
+                        KpOldal.LegutobbKijeloltSzemely = elozoSzemely;
+
+                        // Kijelölés vizuális frissítése (border szín változtatással)
+
+                        if (KpOldal.LegutobbKijeloltSzemely != null && KpOldal.LegutobbKijeloltSzemely.UIElem != null && KpOldal.LegutobbKijeloltSzemely?.UIElem is Border ujBorder)
+                        {
+                            ujBorder.BorderBrush = Brushes.OrangeRed;
+                            KpOldal.kijeloltBorder = ujBorder;
+                        }
+
+
+                        //KezdoTartalomControl kezdoTartalom = new KezdoTartalomControl(this, _context);
+                        aktivTartalom = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, KpOldal.LegutobbiKapcsolatTipus, KpOldal.LegutobbKijeloltSzemely);
+                        aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                        aktivTartalom.KapcsolatTipusBeallitas(KpOldal.LegutobbiKapcsolatTipus);
+
+                        KpOldal.TartalomValto.Content = aktivTartalom;
+                    }
+                }
+
+            }
+        }
+
+        private void KovetkezoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Új kijelölés: következő kisebb ID-jú személy
+            var kovetkezoSzemely = 
+            KpOldal.RajzoltSzemelyek
+                .Where(s => s.Azonosito > KpOldal.LegutobbKijeloltSzemely.Azonosito)
+                .OrderBy(s => s.Azonosito)
+                .FirstOrDefault();
+
+
+
+            if (KpOldal.TartalomValto.Content is KapcsolodoSzemelyLetrehozControl aktivTartalom)
+            {
+                if (kovetkezoSzemely != null)
+                {
+
+                    if (KpOldal.LegutobbiKapcsolatTipus != "")
+                    {
+
+                        // Előző kijelölés eltüntetése
+                        if (KpOldal.kijeloltBorder != null)
+                            KpOldal.kijeloltBorder.BorderBrush = Brushes.Transparent;
+
+                        KpOldal.LegutobbKijeloltSzemely = kovetkezoSzemely;
+
+                        // Kijelölés vizuális frissítése (border szín változtatással)
+
+                        if (KpOldal.LegutobbKijeloltSzemely != null && KpOldal.LegutobbKijeloltSzemely.UIElem != null && KpOldal.LegutobbKijeloltSzemely?.UIElem is Border ujBorder)
+                        {
+                            ujBorder.BorderBrush = Brushes.OrangeRed;
+                            KpOldal.kijeloltBorder = ujBorder;
+                        }
+
+
+                        //KezdoTartalomControl kezdoTartalom = new KezdoTartalomControl(this, _context);
+                        aktivTartalom = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, KpOldal.LegutobbiKapcsolatTipus, KpOldal.LegutobbKijeloltSzemely);
+                        aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                        aktivTartalom.KapcsolatTipusBeallitas(KpOldal.LegutobbiKapcsolatTipus);
+
+                        KpOldal.TartalomValto.Content = aktivTartalom;
+                    }
+                }
+
+            }
+
         }
     }
 }

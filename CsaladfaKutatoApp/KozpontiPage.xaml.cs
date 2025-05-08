@@ -39,7 +39,7 @@ namespace CsaladfaKutatoApp
         private Point _lastMousePosition;
         private bool _isDragging = false;
         BitmapImage bitmap;
-        private Border kijeloltBorder = null;
+        public Border kijeloltBorder = null;
         public RajzoltSzemely LegutobbKijeloltSzemely { get; set; }
         public List<RajzoltSzemely> RajzoltSzemelyek;
         private Dictionary<int, Border> szemelyBorderDictionary = new Dictionary<int, Border>();
@@ -48,6 +48,7 @@ namespace CsaladfaKutatoApp
         private Dictionary<int, int> partnerMapFerfiaknak = new();
         private Dictionary<int?, double> xtavolsagMapElsoGyerekeknek = new();
         public ObservableCollection<RajzoltSzemely>[] generaciosListakTomb;
+        public string LegutobbiKapcsolatTipus;
         private const double BoxWidth = 100;
         private const double BoxHeight = 100;
         private const double SpacingX = 50;
@@ -304,6 +305,26 @@ namespace CsaladfaKutatoApp
             if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
             {
                 aktivTartalom.DataContext = szemely;
+                
+            }
+
+            if (TartalomValto.Content is KapcsolodoSzemelyLetrehozControl aktivTartalom2)
+            {
+                if (LegutobbiKapcsolatTipus != "")
+                {
+                    //KezdoTartalomControl kezdoTartalom = new KezdoTartalomControl(this, _context);
+                    aktivTartalom2 = new KapcsolodoSzemelyLetrehozControl(this, _context, LegutobbiKapcsolatTipus, LegutobbKijeloltSzemely);
+                    aktivTartalom2.DataContext = szemely;
+                    aktivTartalom2.KapcsolatTipusBeallitas(LegutobbiKapcsolatTipus);
+
+                    TartalomValto.Content = aktivTartalom2;
+                }
+                
+            }
+
+            if (TartalomValto.Content is SzemelyKapcsolataiControl aktivTartalom3)
+            {
+                aktivTartalom3.DataContext = szemely;
             }
         }
 

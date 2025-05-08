@@ -11,8 +11,8 @@
         <WrapPanel Margin="0,0,0,10">
             <TextBlock Text="{Binding KNev}" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
             <Button>Töröl</Button>
-            <Button>Előző</Button>
-            <Button Width="73">Következő</Button>
+            <Button Click="ElozoButton_Click">Előző</Button>
+            <Button Click="KovetkezoButton_Click" Width="73">Következő</Button>
         </WrapPanel>
         
         <TextBlock x:Name="KapcsolodoSzemelyTextBlock" Height="19" Width="223" Margin="10,0,10,0" FontWeight="Bold" TextAlignment="Left" HorizontalAlignment="Left"/>

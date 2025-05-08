@@ -2,6 +2,7 @@
 using CsaladfaKutatoApp.Models.DTO;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,8 @@ namespace CsaladfaKutatoApp
             szemelyTestverei = _legutobbKijeloltSzemely.Testverek;
         }
 
+        
+
 
         private void Panel_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -57,6 +60,73 @@ namespace CsaladfaKutatoApp
             }
 
             KpOldal.TartalomValtas(kezdo);
+        }
+
+        private void ElozoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Új kijelölés: következő kisebb ID-jú személy
+            var elozoSzemely =
+            KpOldal.RajzoltSzemelyek
+                .Where(s => s.Azonosito < KpOldal.LegutobbKijeloltSzemely.Azonosito)
+                .OrderByDescending(s => s.Azonosito)
+                .FirstOrDefault();
+
+
+            // Aktuális KezdoTartalomControl elérése
+            if (KpOldal.TartalomValto.Content is SzemelyKapcsolataiControl aktivTartalom)
+            {
+                if (elozoSzemely != null)
+                {
+                    // Előző kijelölés eltüntetése
+                    if (KpOldal.kijeloltBorder != null)
+                        KpOldal.kijeloltBorder.BorderBrush = Brushes.Transparent;
+
+                    KpOldal.LegutobbKijeloltSzemely = elozoSzemely;
+
+                    // Kijelölés vizuális frissítése (border szín változtatással)
+
+                    if (KpOldal.LegutobbKijeloltSzemely != null && KpOldal.LegutobbKijeloltSzemely.UIElem != null && KpOldal.LegutobbKijeloltSzemely?.UIElem is Border ujBorder)
+                    {
+                        ujBorder.BorderBrush = Brushes.OrangeRed;
+                        KpOldal.kijeloltBorder = ujBorder;
+                    }
+                    aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                }
+
+            }
+        }
+
+        private void KovetkezoButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Új kijelölés: következő kisebb ID-jú személy
+            var kovetkezoSzemely = KpOldal.RajzoltSzemelyek
+                .Where(s => s.Azonosito > KpOldal.LegutobbKijeloltSzemely.Azonosito)
+                .OrderBy(s => s.Azonosito)
+                .FirstOrDefault();
+
+
+            // Aktuális KezdoTartalomControl elérése
+            if (KpOldal.TartalomValto.Content is SzemelyKapcsolataiControl aktivTartalom)
+            {
+                if (kovetkezoSzemely != null)
+                {
+                    // Előző kijelölés eltüntetése
+                    if (KpOldal.kijeloltBorder != null)
+                        KpOldal.kijeloltBorder.BorderBrush = Brushes.Transparent;
+
+                    KpOldal.LegutobbKijeloltSzemely = kovetkezoSzemely;
+
+                    // Kijelölés vizuális frissítése (border szín változtatással)
+
+                    if (KpOldal.LegutobbKijeloltSzemely != null && KpOldal.LegutobbKijeloltSzemely.UIElem != null && KpOldal.LegutobbKijeloltSzemely?.UIElem is Border ujBorder)
+                    {
+                        ujBorder.BorderBrush = Brushes.OrangeRed;
+                        KpOldal.kijeloltBorder = ujBorder;
+                    }
+                    aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+
+                }
+            }
         }
     }
 }
