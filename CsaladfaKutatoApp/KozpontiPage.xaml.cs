@@ -253,8 +253,33 @@ namespace CsaladfaKutatoApp
         {
             if (torlendoSzemely?.UIElem == null) return;
 
-            // Törlés a Canvasról
+            // Törlés a Canvasról: először vonalakat aztán személyeket. Elég egyszer törölni.
+            if (torlendoSzemely?.Gyermek_Szulo_Vonal != null)
+            {
+                CsaladfaVaszon.Children.Remove(torlendoSzemely.Gyermek_Szulo_Vonal);
+                
+                //mivel mindig csak a gyereket lehet törölni előőb és itt is azt töröljük ezért annak
+                //már felesleges nullra állítani a Gyermek_Szulo_Vonal tulajdonságát
+                //az apa és anya gyermek_szulo vonalát azért nem töröljül mert az a szülőket köti össze az ő szüleikkel
+
+                //a szülők Gyermekei listájából is törölni kell az illetőt
+                torlendoSzemely.Anya.Gyermekei.Remove(torlendoSzemely);
+                torlendoSzemely.Apa.Gyermekei.Remove(torlendoSzemely);
+
+                
+            }
+                
+            if (torlendoSzemely?.Parkapcsolat_Vonal != null)
+            {
+                CsaladfaVaszon.Children.Remove(torlendoSzemely.Parkapcsolat_Vonal);
+                torlendoSzemely.Parja.Parkapcsolat_Vonal = null;//mert itt oda vissza számított a vonal
+                torlendoSzemely.Parja.Parja = null;
+
+            }
+                
+            
             CsaladfaVaszon.Children.Remove(torlendoSzemely.UIElem);
+            
 
             // Frissítjük a személyek listáját
             RajzoltSzemelyek.Remove(torlendoSzemely);
@@ -328,20 +353,7 @@ namespace CsaladfaKutatoApp
             }
         }
 
-        private void RajzolVonalat(double kezdoX, double kezdoY, double vegX, double vegY)
-        {
-            var vonal = new Line
-            {
-                X1 = kezdoX,
-                Y1 = kezdoY,
-                X2 = vegX,
-                Y2 = vegY,
-                Stroke = Brushes.DarkSlateGray,
-                StrokeThickness = 2
-            };
-
-            CsaladfaVaszon.Children.Add(vonal);
-        }
+        
 
         private List<RajzoltSzemely> BetoltSzemelyekAdatbazisbol()
         {
@@ -366,7 +378,9 @@ namespace CsaladfaKutatoApp
                     ELsoGyerek = false,
                     ELsoGyerekId = 0,
                     Gyermekei = new List<RajzoltSzemely>(),
-                    Testverek = new List<RajzoltSzemely>()
+                    Testverek = new List<RajzoltSzemely>(),
+                    Gyermek_Szulo_Vonal = null,
+                    Parkapcsolat_Vonal = null
                 })
                 .ToList();
         }
@@ -852,9 +866,9 @@ namespace CsaladfaKutatoApp
                                         partner = szemelyek.FirstOrDefault(k => k.Azonosito == partnerKapcsolat.SzemelyId);
                                         szemelyDict[partnerKapcsolat.SzemelyId] = partner;
                                     }
-
-                                    rendezettGeneraciosLista.Add(partner);
                                     rendezettGeneraciosLista.Add(CsakHazasFerfi);
+                                    rendezettGeneraciosLista.Add(partner);
+                                    
                                     CsakHazasFerfi.Parja = partner;
                                     partner.Parja = CsakHazasFerfi;
                                     CsakHazasFerfi.NotRajzoljunkElobbParbol = false;
@@ -920,8 +934,9 @@ namespace CsaladfaKutatoApp
                                         szemelyDict[partnerKapcsolat.SzemelyId] = partner;
                                     }
 
-                                    rendezettGeneraciosLista.Add(partner);
                                     rendezettGeneraciosLista.Add(apa);
+                                    rendezettGeneraciosLista.Add(partner);
+                                    
                                     apa.Parja = partner;
                                     partner.Parja = apa;
                                     apa.NotRajzoljunkElobbParbol = false;
@@ -1264,30 +1279,30 @@ namespace CsaladfaKutatoApp
                             if (partnerMapNoknek.ContainsKey(rajzoltszemely.Azonosito))
                             {
                                 ferfiId = partnerMapNoknek[rajzoltszemely.Azonosito]; // Biztonságosan lekérjük az objektumot
-                                //if (!szemelyDict.TryGetValue(ferfiId, out var ParFerfiTagja)) continue;
+                                if (!szemelyDict.TryGetValue(ferfiId, out var ParFerfiTagja)) continue;
                                 Border ferfiBorder = szemelyBorderDictionary[ferfiId];
 
                                 //párkapcsolat vonal kirajzolása
                                 if (rajzoltszemely.NotRajzoljunkElobbParbol != null && rajzoltszemely.NotRajzoljunkElobbParbol == true)
-                                    RajzolVonal(aktualisSzemelyBorder, ferfiBorder, true);
+                                    RajzolVonal(aktualisSzemelyBorder, ferfiBorder, true, rajzoltszemely, ParFerfiTagja);
                                 else if (rajzoltszemely.NotRajzoljunkElobbParbol != null && rajzoltszemely.NotRajzoljunkElobbParbol == false)
-                                    RajzolVonal(ferfiBorder, aktualisSzemelyBorder, true);
+                                    RajzolVonal(ferfiBorder, aktualisSzemelyBorder, true, ParFerfiTagja, rajzoltszemely);
                             }
                         
                         }
                         else
                         {
-                            if (partnerMapNoknek.ContainsKey(rajzoltszemely.Azonosito))
+                            if (partnerMapFerfiaknak.ContainsKey(rajzoltszemely.Azonosito))
                             {
                                 noiId = partnerMapFerfiaknak[rajzoltszemely.Azonosito]; // Biztonságosan lekérjük az objektumot
-                                //if (!szemelyDict.TryGetValue(noId, out var ParNoiTagja)) continue;
+                                if (!szemelyDict.TryGetValue(noiId, out var ParNoiTagja)) continue;
                                 Border noiBorder = szemelyBorderDictionary[noiId];
 
                                 //párkapcsolat vonal kirajzolása
                                 if (rajzoltszemely.NotRajzoljunkElobbParbol != null && rajzoltszemely.NotRajzoljunkElobbParbol == true)
-                                    RajzolVonal(noiBorder, aktualisSzemelyBorder, true);
+                                    RajzolVonal(noiBorder, aktualisSzemelyBorder, true, ParNoiTagja, rajzoltszemely);
                                 else if (rajzoltszemely.NotRajzoljunkElobbParbol != null && rajzoltszemely.NotRajzoljunkElobbParbol == false)
-                                    RajzolVonal(aktualisSzemelyBorder, noiBorder, true);
+                                    RajzolVonal(aktualisSzemelyBorder, noiBorder, true, rajzoltszemely, ParNoiTagja);
                             }
                         
                         }
@@ -1303,10 +1318,10 @@ namespace CsaladfaKutatoApp
 
                             //Anyukát rajzoljuk előbb
                             if (rajzoltszemely.ApaRajzolElobb == false)
-                                RajzolVonalKozep(Anya, Apa, Gyerek);
+                                RajzolVonalKozep(Anya, Apa, Gyerek, rajzoltszemely);
                             //Apukát rajzoljuk előbb
                             else if (rajzoltszemely.ApaRajzolElobb == true)
-                                RajzolVonalKozep(Apa, Anya, Gyerek);
+                                RajzolVonalKozep(Apa, Anya, Gyerek, rajzoltszemely);
 
                         }
                     }
@@ -1315,7 +1330,7 @@ namespace CsaladfaKutatoApp
             
         }
 
-            private void RajzolVonal(Border bal, Border jobb, bool szaggatott)
+            private void RajzolVonal(Border bal, Border jobb, bool szaggatott, RajzoltSzemely szemely1, RajzoltSzemely szemely2)
             {
                 double y = Canvas.GetTop(bal) + BoxHeight;
                 var line = new Line
@@ -1328,22 +1343,27 @@ namespace CsaladfaKutatoApp
                     StrokeThickness = 1.5,
                     StrokeDashArray = szaggatott ? new DoubleCollection { 4, 2 } : null
                 };
+
+                szemely1.Parkapcsolat_Vonal = line;
+                szemely2.Parkapcsolat_Vonal = line;
                 CsaladfaVaszon.Children.Add(line);
             }
 
-            private void RajzolVonalKozep(Border szulo1, Border szulo2, Border gyerek)
+            private void RajzolVonalKozep(Border szulo1, Border szulo2, Border gyerek, RajzoltSzemely gyerekSzemely)
             {
-            double felsoPontMagassag = BoxHeight + 5;
+                double felsoPontMagassag = BoxHeight + 5;
                 
-                double x1 = Canvas.GetLeft(szulo1);
-                double x2 = Canvas.GetLeft(szulo2);
-                double y1 = Canvas.GetTop(szulo1) + felsoPontMagassag;
-                double gyY = Canvas.GetTop(gyerek);
-                double gyX = Canvas.GetLeft(gyerek) + BoxWidth / 2;
+                    double x1 = Canvas.GetLeft(szulo1);
+                    double x2 = Canvas.GetLeft(szulo2);
+                    double y1 = Canvas.GetTop(szulo1) + felsoPontMagassag;
+                    double gyY = Canvas.GetTop(gyerek);
+                    double gyX = Canvas.GetLeft(gyerek) + BoxWidth / 2;
 
-                double szuloKozepX = (x1 + BoxWidth + x2) / 2;
+                    double szuloKozepX = (x1 + BoxWidth + x2) / 2;
 
-                CsaladfaVaszon.Children.Add(new Line
+                
+
+                var line = new Line
                 {
                     X1 = szuloKozepX,
                     Y1 = y1,
@@ -1351,7 +1371,11 @@ namespace CsaladfaKutatoApp
                     Y2 = gyY,
                     Stroke = Brushes.Black,
                     StrokeThickness = 2
-                });
+                };
+                gyerekSzemely.Gyermek_Szulo_Vonal=line;//mindig csak a gyerekhez állítjuk be
+                
+
+                CsaladfaVaszon.Children.Add(line);
             }
 
 

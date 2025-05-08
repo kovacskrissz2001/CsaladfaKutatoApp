@@ -10,7 +10,7 @@
        <StackPanel PreviewMouseDown="Panel_PreviewMouseDown" Background="#EEE" Width="250" Margin="0,0,10,0">
         <WrapPanel Margin="0,0,0,10">
             <TextBlock Text="{Binding KNev}" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
-            <Button>Töröl</Button>
+            <Button Click="TorlesButton_Click">Töröl</Button>
             <Button Click="ElozoButton_Click">Előző</Button>
             <Button Click="KovetkezoButton_Click" Width="73">Következő</Button>
         </WrapPanel>
