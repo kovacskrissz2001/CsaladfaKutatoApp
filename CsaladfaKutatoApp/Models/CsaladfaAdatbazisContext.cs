@@ -25,8 +25,6 @@ public partial class CsaladfaAdatbazisContext : DbContext
 
     public virtual DbSet<Kapcsolatok> Kapcsolatoks { get; set; }
 
-    public virtual DbSet<Mellekletek> Mellekleteks { get; set; }
-
     public virtual DbSet<Szemelyek> Szemelyeks { get; set; }
 
     public virtual DbSet<Tortenetek> Torteneteks { get; set; }
@@ -116,23 +114,7 @@ public partial class CsaladfaAdatbazisContext : DbContext
                 .HasConstraintName("FK__Kapcsolat__Szeme__74AE54BC");
         });
 
-        modelBuilder.Entity<Mellekletek>(entity =>
-        {
-            entity.HasKey(e => e.MellekletId).HasName("PK__Mellekle__43E4786405410686");
-
-            entity.ToTable("Mellekletek");
-
-            entity.Property(e => e.FajlEleresiUt).HasMaxLength(255);
-            entity.Property(e => e.FeltoltesDatum)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Leiras).HasMaxLength(255);
-
-            entity.HasOne(d => d.Szemely).WithMany(p => p.Mellekleteks)
-                .HasForeignKey(d => d.SzemelyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Melleklet__Szeme__787EE5A0");
-        });
+        
 
         modelBuilder.Entity<Szemelyek>(entity =>
         {

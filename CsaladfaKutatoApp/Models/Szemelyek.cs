@@ -41,7 +41,6 @@ public partial class Szemelyek
 
     public virtual ICollection<Kapcsolatok> KapcsolatokSzemelies { get; set; } = new List<Kapcsolatok>();
 
-    public virtual ICollection<Mellekletek> Mellekleteks { get; set; } = new List<Mellekletek>();
 
     public virtual ICollection<Tortenetek> Torteneteks { get; set; } = new List<Tortenetek>();
 }
