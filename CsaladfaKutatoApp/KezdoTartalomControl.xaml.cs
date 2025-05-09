@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CsaladfaKutatoApp.Segedeszkozok;
+using System.IO;
 
 
 namespace CsaladfaKutatoApp
@@ -29,7 +30,8 @@ namespace CsaladfaKutatoApp
     {
         private KozpontiPage KpOldal;
         private readonly CsaladfaAdatbazisContext _context;
-        private int? felhasznaloId = ((MainWindow)Application.Current.MainWindow).BejelentkezettFelhasznaloId;
+        private readonly int? felhasznaloId = ((MainWindow)Application.Current.MainWindow).BejelentkezettFelhasznaloId;
+        
 
 
 
@@ -38,7 +40,53 @@ namespace CsaladfaKutatoApp
             InitializeComponent();
             KpOldal = Szulo;
             _context = context;
-         
+
+
+        }
+        public void BetoltSzemelyKepet()
+        {
+            if (KpOldal?.LegutobbKijeloltSzemely == null)
+                return;
+
+            int szemelyId = KpOldal.LegutobbKijeloltSzemely.Azonosito;
+
+            var tortenetesKep = _context.Torteneteks
+                .Include(t => t.Foto)
+                .Where(t => t.SzemelyId == szemelyId && t.Foto != null)
+                .Select(t => t.Foto)
+                .FirstOrDefault();
+
+            if (tortenetesKep != null)
+            {
+                BeallitKepet(tortenetesKep.FotoBase64);
+            }
+            else
+            {
+                var egyebKep = _context.Fotoks
+                    .Where(f => f.SzemelyId == szemelyId)
+                    .FirstOrDefault();
+
+                if (egyebKep != null)
+                {
+                    BeallitKepet(egyebKep.FotoBase64);
+                }
+            }
+        }
+        private void BeallitKepet(string base64)
+        {
+            byte[] kepBytes = Convert.FromBase64String(base64);
+            using var stream = new MemoryStream(kepBytes);
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = stream;
+            image.EndInit();
+
+            if (this.FindName("profilkep") is Image kep)
+            {
+                kep.Source = image;
+                kep.Visibility = Visibility.Visible;
+            }
         }
 
         private void NavigalKapcsolodoLetrehoz(string kapcsolatTipus)
@@ -174,6 +222,18 @@ namespace CsaladfaKutatoApp
              }
             
             
+        }
+
+        private void FotokTortenet_Click(object sender, RoutedEventArgs e)
+        {
+            var control = new FotokTortenetPage(KpOldal, _context, felhasznaloId);
+            if (KpOldal.LegutobbKijeloltSzemely is not null)
+            {
+                control.DataContext = KpOldal.LegutobbKijeloltSzemely;
+
+            }
+            //Navigáljunk a FotokTortenetekPage-re.
+           ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(control);
         }
     }
 }

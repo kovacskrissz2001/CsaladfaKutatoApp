@@ -62,9 +62,11 @@ namespace CsaladfaKutatoApp
             _context = context;
             _felhasznaloId = felhasznaloId;
 
-            TartalomValto.Content = new KezdoTartalomControl(this, _context);
+            
 
+            TartalomValto.Content = new KezdoTartalomControl(this, _context);
             Loaded += KozpontiPage_Loaded; // hívás betöltéskor
+
         }
 
         private void KozpontiPage_Loaded(object sender, RoutedEventArgs e)
@@ -74,6 +76,12 @@ namespace CsaladfaKutatoApp
             CanvasScaleTransform.ScaleY = 0.8;
 
             MegjelenitCsaladfat();
+
+            //frissítünk a profilkép miatt
+            KezdoTartalomControl frissitettOldal = new KezdoTartalomControl(this, _context);
+            frissitettOldal.BetoltSzemelyKepet();
+            TartalomValto.Content = frissitettOldal;
+
         }
 
 
@@ -171,9 +179,30 @@ namespace CsaladfaKutatoApp
                 Tag = szemely //mentjük a személy objektumot későbbi használatra
             };
 
-            string alapKepBase64 = szemely.Nem == "Férfi"
+            //Megézzük, hogy az adatbázisban van-e hozzá tartozó kép, ha van azt jelenítjük meg, ha nincs
+            //akkor az alapértelmezettet
+            var alapKepBase64 = _context.Fotoks
+            .Where(f => f.SzemelyId == szemely.Azonosito)
+            .Select(f => f.FotoBase64)
+            .FirstOrDefault();
+
+            var beallitottKep = _context.Fotoks
+            .Where(f => f.SzemelyId == szemely.Azonosito &&
+                _context.Torteneteks.Any(t => t.FotoId == f.FotoId))
+            .Select(f => f.FotoBase64)
+            .FirstOrDefault();
+
+            if (beallitottKep != null)
+                alapKepBase64 = beallitottKep;
+
+            if (alapKepBase64 == null)
+            {
+                 alapKepBase64 = szemely.Nem == "Férfi"
                  ? AlapertelmezettKepek.FerfiBase64
                  : AlapertelmezettKepek.NoBase64;
+
+            }
+                
 
             szemely.KepBase64 = alapKepBase64;
 
@@ -1327,6 +1356,11 @@ namespace CsaladfaKutatoApp
                     }
                     yKezdo += 200;
                 }
+
+
+
+        
+
             
         }
 
