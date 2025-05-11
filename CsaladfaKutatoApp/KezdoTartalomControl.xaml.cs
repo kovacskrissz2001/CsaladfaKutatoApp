@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CsaladfaKutatoApp.Segedeszkozok;
 using System.IO;
+using System.Reflection;
 
 
 namespace CsaladfaKutatoApp
@@ -31,7 +32,30 @@ namespace CsaladfaKutatoApp
         private KozpontiPage KpOldal;
         private readonly CsaladfaAdatbazisContext _context;
         private readonly int? felhasznaloId = ((MainWindow)Application.Current.MainWindow).BejelentkezettFelhasznaloId;
-        
+
+        private readonly Dictionary<string, string> mezonevekListViewhoz = new()
+        {
+            { "Keresztnev", "Keresztnév" },
+            { "Vezeteknev", "Vezetéknév" },
+            { "SzuletesiDatum", "Születési dátum" },
+            { "HalalozasiDatum", "Halálozási dátum" },
+            { "EloSzemely", "Élő személy-e" },
+            { "Neme", "Neme" },
+            { "Tanulmanya", "Tanulmány" },
+            { "Foglalkozasa", "Foglalkozás" },
+            { "Vallasa", "Vallás" },
+            { "SzuletesiOrszag", "Születési ország" },
+            { "SzuletesiTelepules", "Születési település" },
+            { "SzuletesiRegio", "Születési régió" },
+            { "HalalozasiOrszag", "Halálozási ország" },
+            { "HalalozasiRegio", "Halálozási régió" },
+            { "HalalozasiTelepules", "Halálozási település" },
+            { "OrokNyugalomHelyeOrszag", "Örök nyugalom helye - ország" },
+            { "OrokNyugalomHelyeRegio", "Örök nyugalom helye - régió" },
+            { "OrokNyugalomHelyeTelepules", "Örök nyugalom helye - település" }
+        };
+
+        private List<(string Mezo, string Ertek)> megjelenitendoAdatok = new();
 
 
 
@@ -41,7 +65,7 @@ namespace CsaladfaKutatoApp
             KpOldal = Szulo;
             _context = context;
 
-
+           
         }
         public void BetoltSzemelyKepet()
         {
@@ -70,6 +94,14 @@ namespace CsaladfaKutatoApp
                 {
                     BeallitKepet(egyebKep.FotoBase64);
                 }
+                else
+                {
+                    if (this.FindName("profilkep") is Image kep)
+                    {
+                        kep.Source = new BitmapImage(new Uri("pack://application:,,,/Images/account-grey-icon.png"));
+                        kep.Visibility = Visibility.Visible;
+                    }
+                }
             }
         }
         private void BeallitKepet(string base64)
@@ -91,7 +123,7 @@ namespace CsaladfaKutatoApp
 
         private void NavigalKapcsolodoLetrehoz(string kapcsolatTipus)
         {
-            var control = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, kapcsolatTipus, KpOldal.LegutobbKijeloltSzemely);
+            var control = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, kapcsolatTipus);
             // Ha van legutóbb kijelölt, beállítjuk
             if (KpOldal.LegutobbKijeloltSzemely is not null)
             {
@@ -105,7 +137,7 @@ namespace CsaladfaKutatoApp
 
         private void Kapcsolatok_Click(object sender, RoutedEventArgs e)
         {
-            var control = new SzemelyKapcsolataiControl(KpOldal, _context, KpOldal.LegutobbKijeloltSzemely);
+            var control = new SzemelyKapcsolataiControl(KpOldal, _context);
             if (KpOldal.LegutobbKijeloltSzemely is not null)
             {
                 control.DataContext = KpOldal.LegutobbKijeloltSzemely;
@@ -140,11 +172,86 @@ namespace CsaladfaKutatoApp
             KpOldal.LegutobbiKapcsolatTipus = "Partner";
             NavigalKapcsolodoLetrehoz("Partner");
         }
-        
+
+        public void ToltsdBeSzemelyAdatokatListViewhoz()
+        {
+            var szemelyId = KpOldal.LegutobbKijeloltSzemely.Azonosito;
+
+            var szemely = _context.Szemelyeks
+                .Include(s => s.Helyszin)
+                .FirstOrDefault(s => s.SzemelyId == szemelyId);
+
+            if (szemely == null) return;
+
+            megjelenitendoAdatok.Clear();
+
+            foreach (var prop in typeof(Szemelyek).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (prop.Name == "SzemelyId" || prop.Name == "HelyszinId" || prop.Name == "FelhasznaloId") continue;
+                if (prop.PropertyType != typeof(string) && !prop.PropertyType.IsValueType) continue;
+
+                var ertek = prop.GetValue(szemely);
+                if (ertek != null && !string.IsNullOrWhiteSpace(ertek.ToString()))
+                {
+                    string cimke = mezonevekListViewhoz.TryGetValue(prop.Name, out var felirat) ? felirat : prop.Name;
+                    string megjelenitettErtek = prop.Name == "EloSzemely"
+                        ? ((bool)ertek ? "Igen" : "Nem")
+                        : ertek.ToString();
+                    megjelenitendoAdatok.Add((cimke, megjelenitettErtek));
+                }
+            }
+
+            if (szemely.Helyszin != null)
+            {
+                foreach (var prop in typeof(Helyszinek).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    if (prop.Name == "HelyszinId") continue;
+
+                    if (prop.PropertyType != typeof(string) && !prop.PropertyType.IsValueType) continue;
+
+                    var ertek = prop.GetValue(szemely.Helyszin);
+                    if (ertek != null && !string.IsNullOrWhiteSpace(ertek.ToString()))
+                    {
+                        string cimke = mezonevekListViewhoz.TryGetValue(prop.Name, out var felirat) ? felirat : $"Helyszín: {prop.Name}";
+                        megjelenitendoAdatok.Add((cimke, ertek.ToString()));
+                    }
+                }
+            }
+
+            FrissitsListView(megjelenitendoAdatok);
+        }
+
+        private void SzuresTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            if (this.FindName("SzuresTextBox") is TextBox szuroBox)
+            {
+
+                string szuro = szuroBox.Text.Trim().ToLower();
+                var szurtLista = megjelenitendoAdatok
+                    .Where(a => a.Mezo.ToLower().Contains(szuro))
+                    .ToList();
+
+                FrissitsListView(szurtLista);
+            }
+        }
+
+        private void FrissitsListView(List<(string Mezo, string Ertek)> lista)
+        {
+            if (this.FindName("AdatokListView") is ListView listView)
+            {
+
+                listView.ItemsSource = lista.Select(a => new { Mezo = a.Mezo, Ertek = a.Ertek });
+
+                if (listView.Items.Count > 0)
+                {
+                    listView.ScrollIntoView(listView.Items[0]);
+                }
+            }
+        }
 
 
 
-        
 
 
         private void TorlesButton_Click(object sender, RoutedEventArgs e)
@@ -181,7 +288,11 @@ namespace CsaladfaKutatoApp
                         ujBorder.BorderBrush = Brushes.OrangeRed;
                         KpOldal.kijeloltBorder = ujBorder;
                     }
+                    aktivTartalom = new KezdoTartalomControl(KpOldal, _context);
                     aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                    aktivTartalom.BetoltSzemelyKepet();
+                    aktivTartalom.ToltsdBeSzemelyAdatokatListViewhoz();
+                    KpOldal.TartalomValto.Content = aktivTartalom;
 
                 }
             }
@@ -216,7 +327,13 @@ namespace CsaladfaKutatoApp
                             ujBorder.BorderBrush = Brushes.OrangeRed;
                             KpOldal.kijeloltBorder = ujBorder;
                         }
+
+                        aktivTartalom = new KezdoTartalomControl(KpOldal, _context);
                         aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                        aktivTartalom.BetoltSzemelyKepet();
+                        aktivTartalom.ToltsdBeSzemelyAdatokatListViewhoz();
+                        KpOldal.TartalomValto.Content = aktivTartalom;
+                    
                     }
                     
              }
@@ -234,6 +351,17 @@ namespace CsaladfaKutatoApp
             }
             //Navigáljunk a FotokTortenetekPage-re.
            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(control);
+        }
+
+        private void SzemelySzerkeszt_Click(object sender, RoutedEventArgs e)
+        {
+            var control = new SzemelySzerkeszteseControl(KpOldal, _context);
+            if (KpOldal.LegutobbKijeloltSzemely is not null)
+            {
+                control.DataContext = KpOldal.LegutobbKijeloltSzemely;
+
+            }
+            KpOldal.TartalomValtas(control);
         }
     }
 }

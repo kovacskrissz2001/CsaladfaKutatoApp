@@ -30,12 +30,12 @@ namespace CsaladfaKutatoApp
         private List<RajzoltSzemely> szemelyGyerekei;
         private List<RajzoltSzemely> szemelyTestverei;
 
-        public SzemelyKapcsolataiControl(KozpontiPage kpoldal, CsaladfaAdatbazisContext context, RajzoltSzemely legutobbKijeloltSzemely)
+        public SzemelyKapcsolataiControl(KozpontiPage kpoldal, CsaladfaAdatbazisContext context)
         {
             InitializeComponent();
             KpOldal = kpoldal;
             _context = context;
-            _legutobbKijeloltSzemely = legutobbKijeloltSzemely;
+            _legutobbKijeloltSzemely = kpoldal.LegutobbKijeloltSzemely;
 
 
             szemelyGyerekei = _legutobbKijeloltSzemely.Gyermekei;
@@ -57,7 +57,10 @@ namespace CsaladfaKutatoApp
             // Ha van legutóbb kijelölt, beállítjuk
             if (KpOldal.LegutobbKijeloltSzemely is not null)
             {
+                kezdo = new KezdoTartalomControl(KpOldal, _context);
                 kezdo.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                kezdo.BetoltSzemelyKepet();
+                kezdo.ToltsdBeSzemelyAdatokatListViewhoz();
             }
 
             KpOldal.TartalomValtas(kezdo);

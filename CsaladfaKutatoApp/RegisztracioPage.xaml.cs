@@ -152,10 +152,19 @@ namespace CsaladfaKutatoApp
             bool ervenyesJelszo2 = jelszo1 == jelszo2 ? true : false;
             //hibaüzenetet valós időben:
             HibaUzenetAzonosito.Text = ervenyesAzonosito ? "" : AzonositoHibaUzenet;
+            
             HibaUzenetEmail.Text = ervenyesEmail ? "" : EmailHibaUzenet;
+            
             HibaUzenetPasswordBox1.Text = ervenyesJelszo1 ? "" : JelszoHibaUzenet;
+            
             if (!string.IsNullOrWhiteSpace(jelszo2))
+            {
                 HibaUzenetPasswordBox2.Text = ervenyesJelszo2 ? "" : "A két jelszó nem egyezik meg!";
+                
+            }
+               
+
+            
 
             //Bejelentkezés gob aktiválása
             if (ervenyesAzonosito == true && ervenyesEmail==true && ervenyesJelszo1 == true && ervenyesJelszo2 == true)

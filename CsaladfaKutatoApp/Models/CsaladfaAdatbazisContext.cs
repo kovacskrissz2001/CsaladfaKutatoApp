@@ -17,8 +17,6 @@ public partial class CsaladfaAdatbazisContext : DbContext
 
     public virtual DbSet<Felhasznalok> Felhasznaloks { get; set; }
 
-    public virtual DbSet<Forrasok> Forrasoks { get; set; }
-
     public virtual DbSet<Fotok> Fotoks { get; set; }
 
     public virtual DbSet<Helyszinek> Helyszineks { get; set; }
@@ -46,22 +44,6 @@ public partial class CsaladfaAdatbazisContext : DbContext
             entity.Property(e => e.BejelentkezesiMod).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Felhasznalonev).HasMaxLength(50);
-        });
-
-        modelBuilder.Entity<Forrasok>(entity =>
-        {
-            entity.HasKey(e => e.ForrasId).HasName("PK__Forrasok__7C6EBB8CEAEE2FF7");
-
-            entity.ToTable("Forrasok");
-
-            entity.Property(e => e.FajlEleresiUt).HasMaxLength(255);
-            entity.Property(e => e.ForrasCime).HasMaxLength(255);
-            entity.Property(e => e.Jegyzet).HasMaxLength(255);
-
-            entity.HasOne(d => d.Szemely).WithMany(p => p.Forrasoks)
-                .HasForeignKey(d => d.SzemelyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Forrasok__Szemel__00200768");
         });
 
         modelBuilder.Entity<Fotok>(entity =>
