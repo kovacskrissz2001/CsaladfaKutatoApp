@@ -4,14 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        WindowTitleBrush="Black"
         xmlns:local="clr-namespace:CsaladfaKutatoApp"
         mc:Ignorable="d"
+        Icon="Images/csaladfa_alkalmazas_icon.ico"
         Title="Családfakutató Applikáció" Height="450" Width="800">
 
-    <Viewbox Stretch="Uniform">
-        <Frame x:Name="MainFrame"
-               Width="906"
-               Height="497"
-               NavigationUIVisibility="Hidden" />
+    <Viewbox Stretch="Fill">
+        <Grid Width="800" Height="450">
+            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+        </Grid>
     </Viewbox>
 </controls:MetroWindow>

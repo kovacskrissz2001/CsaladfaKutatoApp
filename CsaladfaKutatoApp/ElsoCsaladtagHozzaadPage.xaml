@@ -9,7 +9,10 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ElsoCsaladtagHozzaadPage">
 
-    <Grid Margin="0,10,0,3" Focusable="True" Background="Transparent">
+    <Grid Margin="0,0,0,-3" Focusable="True" >
+        <Grid.Background>
+            <ImageBrush ImageSource="Images/tree.png" Stretch="Fill"/>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -22,19 +25,19 @@
             <ColumnDefinition Width="Auto" MinWidth="587.727"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock FontSize="20" FontWeight="Bold" Margin="0,0,-10,55" TextAlignment="Center" Grid.Row="0" Grid.Column="1">
-            Regisztrációt követő első lépés
+        <TextBlock FontSize="20" FontWeight="Bold" Foreground="#fcfcfc" Margin="0,0,-10,55" TextAlignment="Center" Grid.Row="0" Grid.Column="1">
+            Családfa létrehozásához szükséges első lépés
         </TextBlock>
 
-        <TextBlock FontSize="14" Margin="0,45,0,13" HorizontalAlignment="Center" TextAlignment="Left" TextWrapping="Wrap" Grid.Column="1" Width="356">
+        <TextBlock FontSize="14" Margin="0,45,0,13" FontWeight="Bold" Foreground="#fcfcfc" HorizontalAlignment="Center" TextAlignment="Left" TextWrapping="Wrap" Grid.Column="1" Width="389">
             Első lépésként kérjük adja meg az egyik családtag adatait,<LineBreak/> aki elsőnek szerepelni fog a családfában!
         </TextBlock>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" Grid.Row="2" Grid.Column="1" Height="331" Width="356" Grid.RowSpan="2">
-            <Border BorderBrush="Black" BorderThickness="2" Padding="10" Width="348" Height="324">
+        <StackPanel Background="#66000000" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" Grid.Row="2" Grid.Column="1" Height="331" Width="356" Grid.RowSpan="2">
+            <Border BorderBrush="White" BorderThickness="2" Padding="10" Width="355" Height="331">
                 <StackPanel Margin="-5,-7,-7,-7">
 
-                    <TextBlock Text="Első családtag hozzáadása" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Első családtag hozzáadása"  Foreground="#fcfcfc" FontSize="14" FontWeight="SemiBold" TextAlignment="Center" Margin="0,0,0,10"/>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -46,44 +49,51 @@
                             <ColumnDefinition Width="Auto" MinWidth="126.917"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Neme:" FontWeight="SemiBold" Grid.Row="0" Grid.Column="0" Margin="0,0,43,40" Grid.RowSpan="2"/>
+                        <TextBlock Text="Neme:"  Foreground="#fcfcfc" FontWeight="SemiBold" Grid.Row="0" Grid.Column="0" Margin="0,0,43,40" Grid.RowSpan="2"/>
                         <StackPanel Orientation="Horizontal" Margin="0,5,15,5" Width="114" RenderTransformOrigin="0.481,0.599" HorizontalAlignment="Center" Grid.Row="1">
-                            <RadioButton Content="Férfi" Margin="0,0,10,0" GroupName="Nem" Background="Transparent"/>
-                            <RadioButton Content="Nő" GroupName="Nem" Background="Transparent"/>
+                            <RadioButton Content="Férfi" Foreground="#fcfcfc" Margin="0,0,10,0" GroupName="Nem" Background="Transparent"/>
+                            <RadioButton Content="Nő"  Foreground="#fcfcfc" GroupName="Nem" Background="Transparent"/>
                         </StackPanel>
-                        <TextBlock Text="Élő személy?" FontWeight="SemiBold" Grid.Row="0" Grid.Column="1" Margin="35,0,4,40" Grid.RowSpan="2"/>
+                        <TextBlock Text="Élő személy?" Foreground="#fcfcfc" FontWeight="SemiBold" Grid.Row="0" Grid.Column="1" Margin="35,0,4,40" Grid.RowSpan="2"/>
                         <StackPanel Orientation="Horizontal" Margin="35,5,10,5" Grid.Row="1" Grid.Column="1" Width="114">
-                            <RadioButton Content="Igen" Margin="0,0,10,0" GroupName="Elo" Background="Transparent"/>
-                            <RadioButton Content="Nem" GroupName="Elo" Background="Transparent"/>
+                            <RadioButton Content="Igen" Foreground="#fcfcfc" Margin="0,0,10,0" GroupName="Elo" Background="Transparent"/>
+                            <RadioButton Content="Nem" Foreground="#fcfcfc" GroupName="Elo" Background="Transparent"/>
                         </StackPanel>
                     </Grid>
 
 
 
                     <UniformGrid Columns="2" Margin="0,5">
-                        <TextBlock Text="Keresztnév:" VerticalAlignment="Center"/>
-                        <TextBlock Text="Vezetéknév:" VerticalAlignment="Center"/>
+                        <TextBlock Text="Keresztnév:" Foreground="#fcfcfc" FontWeight="bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="Vezetéknév:" VerticalAlignment="Center" Foreground="#fcfcfc" FontWeight="bold"/>
 
-                        <TextBox Name="KeresztnevTextBox" Margin="0,5"/>
-                        <TextBox Name="VezeteknevTextBox" Margin="5"/>
+                        <TextBox Name="KeresztnevTextBox" Margin="0,5" controls:TextBoxHelper.Watermark="Keresztnév"/>
+                        <TextBox Name="VezeteknevTextBox" Margin="5" controls:TextBoxHelper.Watermark="Vezetéknév"/>
 
-                        <TextBlock Text="Születési dátum:" VerticalAlignment="Center"/>
-                        <TextBlock Text="Születési hely:" VerticalAlignment="Center"/>
+                        <TextBlock Text="Születési dátum(yyyy-mm-dd):" VerticalAlignment="Center" Foreground="#fcfcfc" FontWeight="bold" Width="168"/>
+                        <TextBlock Text="Születési ország:" VerticalAlignment="Center" Foreground="#fcfcfc" FontWeight="bold" Width="153"/>
 
-                        <TextBox Name="SzuletesiDatumTextBox" Margin="0,5"/>
-                        <TextBox Name="SzuletesiHelyTextBox" Margin="5"/>
+                        <TextBox Name="SzuletesiDatumTextBox" Margin="0,5" controls:TextBoxHelper.Watermark="Születési dátum"/>
+                        <TextBox Name="SzuletesiOrszagTextBox" Margin="5" controls:TextBoxHelper.Watermark="Születési ország"/>
+
+
                     </UniformGrid>
+                    <WrapPanel Margin="5,0,0,0">
+                        <TextBlock Text="Születési Település:" FontWeight="Bold" Foreground="#fcfcfc" VerticalAlignment="Center" Width="165" Margin="0,0,5,0" />
+                        <TextBox Name="SzuletesiTelepulesTextBox" Width="156" controls:TextBoxHelper.Watermark="Születési település"/>
+                    </WrapPanel>
+
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
-                        <Button Content="Hozzáadás" Width="100" Margin="5"/>
-                        <Button Content="Mégse" Width="100" Margin="5"/>
+                        <Button Content="Hozzáadás" Width="100" Margin="5" Click="Hozzaadas_Click"/>
+                        <Button Content="Törlés" Width="100" Margin="5" Click="Torles_Click"/>
                     </StackPanel>
 
                 </StackPanel>
             </Border>
 
         </StackPanel>
-        <Button Content="Vissza a regisztrációhoz" Click="Regisztracio_Click" HorizontalAlignment="Left" Margin="0,2,0,0" VerticalAlignment="Top" Width="162" Height="27"/>
+        <Button Content="Vissza a bejelentkezéshez" Click="Bejelentkezes_Click" HorizontalAlignment="Left" Margin="0,2,0,0" VerticalAlignment="Top" Width="162" Height="27"/>
 
     </Grid>
 </Page>

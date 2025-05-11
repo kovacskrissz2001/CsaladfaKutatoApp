@@ -19,6 +19,7 @@ using static System.Net.Mime.MediaTypeNames;
 using CsaladfaKutatoApp.Models;
 using CsaladfaKutatoApp.Segedeszkozok;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace CsaladfaKutatoApp
 {
@@ -28,6 +29,8 @@ namespace CsaladfaKutatoApp
     public partial class BejelentkezesPage : Page
     {
         private readonly CsaladfaAdatbazisContext _context;
+        int? bejelentkezFelhasznaloId;
+        bool VanMarSzemely;
 
         public BejelentkezesPage(CsaladfaAdatbazisContext context)
         {
@@ -177,10 +180,11 @@ namespace CsaladfaKutatoApp
                 {
                     MessageBox.Show("Sikeres bejelentkezés!", "Üdvözlünk", MessageBoxButton.OK, MessageBoxImage.Information);
                     // Csak itt, sikeres bejelentkezés után fut le a tárolt eljárás!
-                    var connection = _context.Database.GetDbConnection();
-                    connection.Open();
-
-                    using (var command = connection.CreateCommand())
+                    var kapcsolat = _context.Database.GetDbConnection();
+                    kapcsolat.Open();
+                    ((MainWindow)System.Windows.Application.Current.MainWindow).BejelentkezettFelhasznaloId = felhasznalo.FelhasznaloId;
+                    bejelentkezFelhasznaloId = ((MainWindow)System.Windows.Application.Current.MainWindow).BejelentkezettFelhasznaloId;
+                    using (var command = kapcsolat.CreateCommand())
                     {
                         command.CommandText = "sp_ModositBejelentkezesiMod";
                         command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -197,20 +201,61 @@ namespace CsaladfaKutatoApp
 
                         command.ExecuteNonQuery();
                     }
+                    kapcsolat.Close();
 
-                    connection.Close();
+                    var kapcsolat1 = _context.Database.GetDbConnection();
+                    using (var parancs = kapcsolat1.CreateCommand())
+                    {
+                            parancs.CommandText = "sp_EllenorizSzemelyekLetezese";
+                            parancs.CommandType = CommandType.StoredProcedure;
 
-                    // TODO: Navigálás főoldalra, felhasználó mentése stb.
+                            
+                        if (kapcsolat1.State != ConnectionState.Open)
+                            kapcsolat1.Open();
+                        // paraméter hozzáadása
+                        var param = parancs.CreateParameter();
+                        param.ParameterName = "@FelhasznaloId";
+                        param.Value = bejelentkezFelhasznaloId;
+                        parancs.Parameters.Add(param);
+
+
+                        var eredmeny = parancs.ExecuteScalar();
+                        if (eredmeny != null && eredmeny != DBNull.Value)
+                        {
+                            VanMarSzemely = Convert.ToBoolean(eredmeny);
+                        }
+                    }
+                    
+
+                    kapcsolat1.Close();
+
+
+                    // Navigáció 
+                    if (VanMarSzemely==false)
+                    {
+                        // Ha még nincs személy, akkor navigálunk az ElsoCsaladtagHozzaadPage oldalra.
+                        ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
+                    }
+                    else
+                    {
+                        // Ha van már személy, akkor navigáljunk a KozpontiPage-re.
+                        ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, bejelentkezFelhasznaloId));
+                    }
                 }
                 else
                 {
                     HibaUzenetJelszo.Text = "Hibás jelszó.";
                 }
+
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Hiba történt a bejelentkezés során: {ex.Message}", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
+
+            
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)

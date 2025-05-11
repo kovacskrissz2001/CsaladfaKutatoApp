@@ -11,13 +11,13 @@ public partial class Szemelyek
 
     public string Vezeteknev { get; set; } = null!;
 
-    public DateOnly? SzuletesiDatum { get; set; }
+    public DateOnly? SzuletesiDatum { get; set; } = null!;
 
     public DateOnly? HalalozasiDatum { get; set; }
 
-    public bool EloSzemely { get; set; }
+    public bool EloSzemely { get; set; } 
 
-    public string? Neme { get; set; }
+    public string? Neme { get; set; } = null!;
 
     public string? Tanulmanya { get; set; }
 
@@ -25,13 +25,11 @@ public partial class Szemelyek
 
     public string? Vallasa { get; set; }
 
-    public int FelhasznaloId { get; set; }
+    public int? FelhasznaloId { get; set; }
 
     public int? HelyszinId { get; set; }
 
     public virtual Felhasznalok Felhasznalo { get; set; } = null!;
-
-    public virtual ICollection<Forrasok> Forrasoks { get; set; } = new List<Forrasok>();
 
     public virtual ICollection<Fotok> Fotoks { get; set; } = new List<Fotok>();
 
@@ -41,7 +39,6 @@ public partial class Szemelyek
 
     public virtual ICollection<Kapcsolatok> KapcsolatokSzemelies { get; set; } = new List<Kapcsolatok>();
 
-    public virtual ICollection<Mellekletek> Mellekleteks { get; set; } = new List<Mellekletek>();
 
     public virtual ICollection<Tortenetek> Torteneteks { get; set; } = new List<Tortenetek>();
 }

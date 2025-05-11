@@ -1,0 +1,184 @@
+﻿<UserControl x:Class="CsaladfaKutatoApp.KapcsolodoSzemelyLetrehozControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CsaladfaKutatoApp"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" Width="275">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0" Background="#EEE">
+       <StackPanel PreviewMouseDown="Panel_PreviewMouseDown" Background="#EEE" Width="250" Margin="0,0,10,0">
+        <WrapPanel Margin="0,0,0,10">
+            <TextBlock Text="{Binding KNev}" FontWeight="Bold" FontSize="14" Width="80" TextAlignment="Center"/>
+            <Button Click="TorlesButton_Click">Töröl</Button>
+            <Button Click="ElozoButton_Click">Előző</Button>
+            <Button Click="KovetkezoButton_Click" Width="73">Következő</Button>
+        </WrapPanel>
+        
+        <TextBlock x:Name="KapcsolodoSzemelyTextBlock" Height="19" Width="223" Margin="10,0,10,0" FontWeight="Bold" TextAlignment="Left" HorizontalAlignment="Left"/>
+            
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="50"/>
+
+                </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="121"/>
+                <ColumnDefinition Width="121"/>
+            </Grid.ColumnDefinitions>
+           
+             <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock Margin="10,0,0,5">Neme:</TextBlock>
+                <WrapPanel Margin="10,0,0,0">
+                    <RadioButton Name="FerfiRadioButton" Margin="0,0,10,0" Background="Transparent">
+                        Férfi
+                    </RadioButton>
+                    <RadioButton Name="NoRadioButton" Margin="0,0,5,0"  Background="Transparent">
+                        Nő
+                    </RadioButton>
+                </WrapPanel>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1">
+                <TextBlock Margin="30,0,0,5">Élő személy?</TextBlock>
+                <CheckBox Name ="EloSzemelyCheckBox" Margin="30,0,0,0" Checked="EloSzemelyCheckBox_Checked" Unchecked="EloSzemelyCheckBox_Unchecked">
+                    Igen
+                </CheckBox>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="Keresztnév:" VerticalAlignment="Center" Margin="5,0,0,5"/>
+                <TextBox Name="KeresztnevTextBox" Height="15" Width="111"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <TextBlock Text="Vezetéknév:" VerticalAlignment="Center" Margin="5,0,0,5"/>
+                <TextBox Name="VezeteknevTextBox" Height="15" Width="111"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.Column="0">
+                <TextBlock Text="Születési dátum:" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBox Name="SzuletesiDatumTextBox" Margin="0,5" Height="15" Width="111"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.Column="1">
+                <TextBlock Text="Születési Ország:" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBox Name="SzuletesiOrszagTextBox" Margin="5" Height="15" Width="111"/>
+            </StackPanel>
+
+                <StackPanel Grid.Row="3" Grid.Column="0">
+                    <TextBlock Text="Születési Régió:" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <TextBox Name="SzuletesiRegioTextBox" Margin="0,5" Height="15" Width="111"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Grid.Column="1">
+                    <TextBlock Text="Születési Település:" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <TextBox Name="SzuletesiTelepulesTextBox" Margin="5" Height="15" Width="111"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="4" Grid.Column="0">
+                    <TextBlock Text="Halál dátuma:" VerticalAlignment="Center" Margin="5,6,0,10"/>
+                    <TextBox Name="HalalDatumTextBox" Margin="0,5" Height="15" Width="111"/>
+                </StackPanel>
+
+            <StackPanel Grid.Row="4" Grid.Column="1">
+                    <TextBlock  VerticalAlignment="Center" Margin="5,0,0,0" TextAlignment="Center">
+                            <Run Text="Halál helye:" />
+                                <LineBreak />
+                            <Run Text="(Ország)" />
+                    </TextBlock>
+                    <TextBox Name="HalalhelyOrszagTextBox" Margin="5"/>
+            </StackPanel>
+
+                <StackPanel Grid.Row="5" Grid.Column="0">
+                    <TextBlock  VerticalAlignment="Center" Margin="5,0,0,0" TextAlignment="Center">
+                        <Run Text="Halál helye:" />
+                            <LineBreak />
+                        <Run Text="(Régió)" />  
+                    </TextBlock>
+                    <TextBox Name="HalalhelyRegioTextBox" Margin="5"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="5" Grid.Column="1">
+                    <TextBlock  VerticalAlignment="Center" Margin="5,0,0,0" TextAlignment="Center">
+                    <Run Text="Halál helye:" />
+                        <LineBreak />
+                    <Run Text="(Település)" />
+                        </TextBlock>
+                    <TextBox Name="HalalhelyTelepulesTextBox" Margin="5"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="6" Grid.Column="0">
+                    <TextBlock   VerticalAlignment="Center" Margin="2,0,0,0" TextAlignment="Center">
+                           <Run Text="Örök nyugalom helye:" />
+                                <LineBreak />
+                            <Run Text="(Ország)" />
+                    </TextBlock>
+                    <TextBox Name="OrokNyugalomHelyeOrszagTextBox" Margin="5" Height="15" Width="111" />
+            </StackPanel>
+
+                <StackPanel Grid.Row="6" Grid.Column="1">
+                    <TextBlock   VerticalAlignment="Center" Margin="2,0,0,0" TextAlignment="Center">
+                       <Run Text="Örök nyugalom helye:" />
+                            <LineBreak />
+                        <Run Text="(Régió)" />
+                            </TextBlock>
+                    <TextBox Name="OrokNyugalomHelyeRegioTextBox" Margin="5" Height="15" Width="111" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="7" Grid.Column="0">
+                    <TextBlock   VerticalAlignment="Center" Margin="2,0,0,0" TextAlignment="Center">
+                   <Run Text="Örök nyugalom helye:" />
+                        <LineBreak />
+                    <Run Text="(Település)" />
+                        </TextBlock>
+                    <TextBox Name="OrokNyugalomHelyeTelepulesTextBox" Margin="5" Height="15" Width="111" />
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="7" Grid.Column="1">
+                    <TextBlock  Text="Foglalkozása:" VerticalAlignment="Center" Margin="5,6,0,10"/>
+                    <TextBox  Name="FoglalkozasaTextBox" Margin="5" Height="15" Width="111"/>
+                </StackPanel>
+
+            <StackPanel Grid.Row="8" Grid.Column="0">
+                <TextBlock Text="Tanulmányai:" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBox  Name="TanulmanyaiTextBox" Margin="5" Height="15" Width="111"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="8" Grid.Column="1">
+                <TextBlock  Text="Vallása:" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBox  Name="VallasaTextBox" Margin="5"/>
+            </StackPanel>
+        </Grid>
+        
+           
+            <WrapPanel Margin="0,10,0,10">
+            <Grid>
+                <Button x:Name="InfoGomb" Content="ℹ️ Segítség" Click="Segitseg_Click" Margin="5,0,25,0"/>
+                <Popup x:Name="BuborekPopup"
+                       PlacementTarget="{Binding ElementName=InfoGomb}"
+                       Placement="Top"
+                       StaysOpen="True"
+                       AllowsTransparency="True"
+                       PopupAnimation="Slide">
+                    <Border Background="LightYellow" BorderBrush="Gray" BorderThickness="1"
+                            CornerRadius="10" Padding="10" Width="200">
+                        <TextBlock Name="PopupUnezet" Text="" 
+                            TextWrapping="Wrap"/>
+                    </Border>
+                </Popup>
+            </Grid>
+            <Button Content="Vissza" Click="Vissza_Click" Margin="0,0,10,0"/>
+            <Button Content="Hozzáadás" Click="Hozzaadas_Click"/>
+        </WrapPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

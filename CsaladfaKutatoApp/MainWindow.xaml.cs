@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,9 @@ namespace CsaladfaKutatoApp
     public partial class MainWindow : MetroWindow
     {
         private CsaladfaAdatbazisContext _context;
+
+        public int? BejelentkezettFelhasznaloId { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,11 +42,15 @@ namespace CsaladfaKutatoApp
 
             // DbContext példányosítása
             _context = new CsaladfaAdatbazisContext(optionsBuilder.Options);
-            
-            // Itt töltjük be a kezdőoldalt (bejelentkezés)
+
+            //Itt töltjük be a kezdőoldalt (bejelentkezés)
             MainFrame.Navigate(new BejelentkezesPage(_context));
 
             // MainFrame.Navigate(new ElsoCsaladtagHozzaadPage(_context));
+            //MainFrame.Navigate(new KozpontiPage(_context));
+
+            
+
 
         }
 

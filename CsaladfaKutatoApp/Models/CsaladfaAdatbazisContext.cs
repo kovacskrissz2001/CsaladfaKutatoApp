@@ -17,20 +17,18 @@ public partial class CsaladfaAdatbazisContext : DbContext
 
     public virtual DbSet<Felhasznalok> Felhasznaloks { get; set; }
 
-    public virtual DbSet<Forrasok> Forrasoks { get; set; }
-
     public virtual DbSet<Fotok> Fotoks { get; set; }
 
     public virtual DbSet<Helyszinek> Helyszineks { get; set; }
 
     public virtual DbSet<Kapcsolatok> Kapcsolatoks { get; set; }
 
-    public virtual DbSet<Mellekletek> Mellekleteks { get; set; }
-
     public virtual DbSet<Szemelyek> Szemelyeks { get; set; }
 
     public virtual DbSet<Tortenetek> Torteneteks { get; set; }
-    
+
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Felhasznalok>(entity =>
@@ -46,22 +44,6 @@ public partial class CsaladfaAdatbazisContext : DbContext
             entity.Property(e => e.BejelentkezesiMod).HasMaxLength(100);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Felhasznalonev).HasMaxLength(50);
-        });
-
-        modelBuilder.Entity<Forrasok>(entity =>
-        {
-            entity.HasKey(e => e.ForrasId).HasName("PK__Forrasok__7C6EBB8CEAEE2FF7");
-
-            entity.ToTable("Forrasok");
-
-            entity.Property(e => e.FajlEleresiUt).HasMaxLength(255);
-            entity.Property(e => e.ForrasCime).HasMaxLength(255);
-            entity.Property(e => e.Jegyzet).HasMaxLength(255);
-
-            entity.HasOne(d => d.Szemely).WithMany(p => p.Forrasoks)
-                .HasForeignKey(d => d.SzemelyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Forrasok__Szemel__00200768");
         });
 
         modelBuilder.Entity<Fotok>(entity =>
@@ -82,9 +64,16 @@ public partial class CsaladfaAdatbazisContext : DbContext
 
             entity.ToTable("Helyszinek");
 
-            entity.Property(e => e.HalalozasiHely).HasMaxLength(255);
-            entity.Property(e => e.OrokNyugalomHelye).HasMaxLength(255);
-            entity.Property(e => e.SzuletesiHely).HasMaxLength(255);
+            
+            entity.Property(e => e.SzuletesiOrszag).HasMaxLength(255);
+            entity.Property(e => e.SzuletesiRegio).HasMaxLength(255);
+            entity.Property(e => e.SzuletesiTelepules).HasMaxLength(255);
+            entity.Property(e => e.HalalozasiOrszag).HasMaxLength(255);
+            entity.Property(e => e.HalalozasiRegio).HasMaxLength(255);
+            entity.Property(e => e.HalalozasiTelepules).HasMaxLength(255);
+            entity.Property(e => e.OrokNyugalomHelyeOrszag).HasMaxLength(255);
+            entity.Property(e => e.OrokNyugalomHelyeRegio).HasMaxLength(255);
+            entity.Property(e => e.OrokNyugalomHelyeTelepules).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Kapcsolatok>(entity =>
@@ -94,7 +83,7 @@ public partial class CsaladfaAdatbazisContext : DbContext
             entity.ToTable("Kapcsolatok");
 
             entity.Property(e => e.KapcsolatTipusa).HasMaxLength(50);
-            entity.Property(e => e.KapcsolodoSzemelyNeve).HasMaxLength(255);
+            
 
             entity.HasOne(d => d.KapcsolodoSzemely).WithMany(p => p.KapcsolatokKapcsolodoSzemelies)
                 .HasForeignKey(d => d.KapcsolodoSzemelyId)
@@ -107,23 +96,7 @@ public partial class CsaladfaAdatbazisContext : DbContext
                 .HasConstraintName("FK__Kapcsolat__Szeme__74AE54BC");
         });
 
-        modelBuilder.Entity<Mellekletek>(entity =>
-        {
-            entity.HasKey(e => e.MellekletId).HasName("PK__Mellekle__43E4786405410686");
-
-            entity.ToTable("Mellekletek");
-
-            entity.Property(e => e.FajlEleresiUt).HasMaxLength(255);
-            entity.Property(e => e.FeltoltesDatum)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Leiras).HasMaxLength(255);
-
-            entity.HasOne(d => d.Szemely).WithMany(p => p.Mellekleteks)
-                .HasForeignKey(d => d.SzemelyId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Melleklet__Szeme__787EE5A0");
-        });
+        
 
         modelBuilder.Entity<Szemelyek>(entity =>
         {
@@ -163,6 +136,8 @@ public partial class CsaladfaAdatbazisContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Tortenete__Szeme__7C4F7684");
         });
+
+        
 
         OnModelCreatingPartial(modelBuilder);
     }

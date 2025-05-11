@@ -1,0 +1,102 @@
+﻿<Page x:Class="CsaladfaKutatoApp.FotokTortenetPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:local="clr-namespace:CsaladfaKutatoApp"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="FotokTortenetPage">
+
+    <Grid Background="DarkBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="380"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="400"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" FontWeight="Bold" Text="Fotók és történet oldal" HorizontalAlignment="Center" FontSize="20"/>
+        <WrapPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">
+            <Button   Click="Torol_Click" HorizontalAlignment="Right" Content="Törlés" Margin="0,5,10,0" Width="74"/>
+            <Button   Click="Vissza_Click" HorizontalAlignment="Right" Content="Főoldal" Margin="0,5,10,0" Width="73"/>
+        </WrapPanel>
+
+        <!--Képek oszlopa-->
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="230"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="70"/>
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="White" BorderThickness="2" Width="200" Height="200" Margin="10" Grid.Row="0">
+                <Grid>
+                    <!-- Ez a szöveg jelenik meg, ha nincs kép -->
+                    <TextBlock x:Name="PlaceholderText"
+                   Text="Kép helye"
+                   Foreground="White"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontStyle="Italic"
+                   Visibility="Visible"/>
+
+                    <Image x:Name="PreviewImage"
+               Stretch="Uniform"
+               Visibility="Collapsed"/>
+                </Grid>
+            </Border>
+
+
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                <Border AllowDrop="True" Drop="Border_Drop" BorderBrush="White" BorderThickness="2" Padding="10" Height="43" Width="287">
+                    <TextBlock Text="Húzz ide egy képet" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Height="22" Width="268" TextAlignment="Center" />
+                </Border>
+
+            </StackPanel>
+            <WrapPanel Grid.Row="2" Grid.Column="0" Margin="10,0,57,0">
+                <Label Content="Személy képei adatbázisból:" Foreground="white"/>
+                <ComboBox   x:Name="KepValaszto" SelectionChanged="KepValaszto_SelectionChanged" DisplayMemberPath="Leiras" Margin="5,5,0,10" Width="170">
+                </ComboBox>
+
+            </WrapPanel>
+            
+
+        </Grid>
+
+        <!--Történet oszlopa-->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="190"/>
+            </Grid.RowDefinitions>
+            <WrapPanel  Grid.Row="0"  HorizontalAlignment="Left">
+                <TextBlock  Text="{Binding VNev}" Foreground="White" TextAlignment="Left" FontWeight="Bold" Margin="0,0,5,0"/>
+                <TextBlock  Text="{Binding KNev}" Foreground="White" FontWeight="Bold" TextAlignment="Right" Margin="0,0,5,0"/>
+                <TextBlock  TextAlignment="Left" Text="története" FontWeight="Bold" Foreground="White"/>
+            </WrapPanel>
+
+            <TextBox x:Name="Tortenet_TextBox" Grid.Row="1" 
+             AcceptsReturn="True"
+             TextWrapping="Wrap"
+             VerticalScrollBarVisibility="Auto"
+             Margin="5,10,10,-160"/>
+
+        </Grid>
+        <WrapPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right">
+            <Button  Click="CsakFotoMentes_Click"  Content="Csak fotó mentése" Margin="10,0,10,0"/>
+            <Button  Click="Mentes_Click"  Content="Fotó és történet mentése" Margin="10,0,10,0"/>
+        </WrapPanel>
+        
+        <WrapPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,44,0">
+            <Label Content="Fotó leírása:" Foreground="White" Margin="5,0,40,5"/>
+            <TextBox x:Name="Leiras_TextBox"  HorizontalAlignment="Center"  TextWrapping="Wrap" controls:TextBoxHelper.Watermark="Fotó leírása" VerticalAlignment="Top" Width="214"/>
+        </WrapPanel>
+
+    </Grid>
+</Page>
