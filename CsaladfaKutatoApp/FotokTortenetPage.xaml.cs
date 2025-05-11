@@ -49,7 +49,7 @@ namespace CsaladfaKutatoApp
 
                 if (kep != null)
                 {
-                    // Base64 konvertálása és megjelenítés
+                    // Base64 konvertálása és megjelenítése
                     PreviewImage.Source = Base64ToImage(kep.FotoBase64);
                     PreviewImage.Visibility = Visibility.Visible;
                     PlaceholderText.Visibility = Visibility.Collapsed;
@@ -64,8 +64,9 @@ namespace CsaladfaKutatoApp
 
         private void Vissza_Click(object sender, RoutedEventArgs e)
         {
+;
             // Navigáljunk a KozpontiPage-re.
-            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context, userId));
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new KozpontiPage(_context,userId)) ;
         }
 
         private void Mentes_Click(object sender, RoutedEventArgs e)

@@ -36,14 +36,13 @@ namespace CsaladfaKutatoApp
 
 
 
-        public KapcsolodoSzemelyLetrehozControl(KozpontiPage kpoldal, CsaladfaAdatbazisContext context,
-           string kapcsolatTipus, RajzoltSzemely legutobbKijeloltSzemely)
+        public KapcsolodoSzemelyLetrehozControl(KozpontiPage kpoldal, CsaladfaAdatbazisContext context,  string kapcsolatTipus)
         {
             InitializeComponent();
             KpOldal = kpoldal;
             _context = context;
             _kapcsolatTipus = kapcsolatTipus;
-            _legutobbKijeloltSzemely = legutobbKijeloltSzemely;
+            _legutobbKijeloltSzemely = kpoldal.LegutobbKijeloltSzemely;
         }
 
 
@@ -92,21 +91,17 @@ namespace CsaladfaKutatoApp
             // Ha van legutóbb kijelölt, beállítjuk
             if (KpOldal.LegutobbKijeloltSzemely is not null)
             {
+                kezdo = new KezdoTartalomControl(KpOldal, _context);
                 kezdo.DataContext = KpOldal.LegutobbKijeloltSzemely;
+                kezdo.BetoltSzemelyKepet();
+                kezdo.ToltsdBeSzemelyAdatokatListViewhoz();
             }
-
+            
             KpOldal.TartalomValtas(kezdo);
             
         }
 
-        private bool VanKozepenVesszo(string szoveg)
-        {
-            if (string.IsNullOrWhiteSpace(szoveg))
-                return false;
-
-            int vesszoIndex = szoveg.IndexOf(",");
-            return vesszoIndex > 0 && vesszoIndex < szoveg.Length - 1;
-        }
+        
 
         public void KapcsolatTipusBeallitas(string tipus)
         {
@@ -266,7 +261,7 @@ namespace CsaladfaKutatoApp
             // Dátum formátum ellenőrzése (YYYY-MM-DD)
             if (!DateTime.TryParseExact(SzuletesiDatumTextBox.Text, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime szuletesiDatum))
             {
-                MessageBox.Show("A születési dátum formátuma nem megfelelő! (Pl: 1990-05-01)", "Dátum hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("A születési dátum formátuma nem megfelelő! Helyes formátum Pl: 1990-05-01", "Dátum hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -275,7 +270,7 @@ namespace CsaladfaKutatoApp
             {
                 if (!DateTime.TryParseExact(HalalDatumTextBox.Text, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime parsedDate))
                 {
-                    MessageBox.Show("A halálozási dátum formátuma nem megfelelő! (Pl: 1990-05-01)", "Dátum hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("A halálozási dátum formátuma nem megfelelő! Helyes formátum Pl: 1990-05-01", "Dátum hiba", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -1000,7 +995,7 @@ namespace CsaladfaKutatoApp
 
 
                         //KezdoTartalomControl kezdoTartalom = new KezdoTartalomControl(this, _context);
-                        aktivTartalom = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, KpOldal.LegutobbiKapcsolatTipus, KpOldal.LegutobbKijeloltSzemely);
+                        aktivTartalom = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, KpOldal.LegutobbiKapcsolatTipus);
                         aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
                         aktivTartalom.KapcsolatTipusBeallitas(KpOldal.LegutobbiKapcsolatTipus);
 
@@ -1046,7 +1041,7 @@ namespace CsaladfaKutatoApp
 
 
                         //KezdoTartalomControl kezdoTartalom = new KezdoTartalomControl(this, _context);
-                        aktivTartalom = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, KpOldal.LegutobbiKapcsolatTipus, KpOldal.LegutobbKijeloltSzemely);
+                        aktivTartalom = new KapcsolodoSzemelyLetrehozControl(KpOldal, _context, KpOldal.LegutobbiKapcsolatTipus);
                         aktivTartalom.DataContext = KpOldal.LegutobbKijeloltSzemely;
                         aktivTartalom.KapcsolatTipusBeallitas(KpOldal.LegutobbiKapcsolatTipus);
 

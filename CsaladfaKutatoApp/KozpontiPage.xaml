@@ -21,16 +21,36 @@
         </Grid.ColumnDefinitions>
 
         <!-- BAL oldali menü -->
-        <StackPanel Grid.Column="0" Background="DarkBlue" Orientation="Vertical" Margin="0,0,0,0">
+        <StackPanel Grid.Column="0" Background="DarkBlue" Orientation="Vertical" PreviewMouseDown="Panel_PreviewMouseDown" Margin="0,0,0,0">
+            <Grid Height="100">
+                <Image Source="pack://application:,,,/Images/tree.png" Margin="10,0,10,0"/>
+            </Grid>
             <TextBlock Text="Menü" FontWeight="Bold" Foreground="White" FontSize="16" Margin="10,10,10,20" TextAlignment="Center"/>
-            <Button Content="Új családfa"  Padding="5" Margin="5,5,5,10" Width="110"/>
-            <Button Content="Megnyitás" Margin="5,5,5,10" Padding="5" Width="110"/>
-            <Button Content="Mentés" Margin="5,5,5,10" Padding="5" Width="110"/>
-            <Button Content="Eszközök" Margin="5,5,5,10" Padding="5" Width="110"/>
+            <Button Content="Új családfa" Click="UjCsaladfa_Click" Padding="5" Margin="5,5,5,12" Width="110"/>
+            <Grid>
+                <Button x:Name="InfoGomb" Content="Segítség" Click="Segitseg_Click" Margin="8,0,8,8"/>
+                <Popup x:Name="BuborekPopup"
+               PlacementTarget="{Binding ElementName=InfoGomb}"
+               Placement="Top"
+               StaysOpen="True"
+               AllowsTransparency="True"
+               PopupAnimation="Slide">
+                    <Border Background="LightYellow" BorderBrush="Gray" BorderThickness="1"
+                    CornerRadius="10" Padding="10" Width="500">
+                        <TextBlock Name="PopupUnezet" Text="" 
+                    TextWrapping="Wrap"/>
+                    </Border>
+                </Popup>
+            </Grid>
             <Button Content="Exportálás PNG" Click="ExportPng_Click" Margin="5,5,5,10" Padding="5" Width="110"/>
-            <Button Content="Segítség" Margin="5,5,5,10" Padding="5" Width="110"/>
             <Button Content="Kijelentkezés" Margin="5,5,5,10" Padding="5" Click="Kijelentkezes_Click" Width="110"/>
+            <Button Content="Fiók törlése" Margin="5,5,5,20" Padding="5" Click="FiokTorlese_Click" Width="110"/>
+
+            
+            
         </StackPanel>
+        
+        
 
         <!-- Családfa -->
         <Grid Margin="3,0,0,0" Grid.Column="1" >

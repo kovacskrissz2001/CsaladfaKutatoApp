@@ -31,8 +31,6 @@ public partial class Szemelyek
 
     public virtual Felhasznalok Felhasznalo { get; set; } = null!;
 
-    public virtual ICollection<Forrasok> Forrasoks { get; set; } = new List<Forrasok>();
-
     public virtual ICollection<Fotok> Fotoks { get; set; } = new List<Fotok>();
 
     public virtual Helyszinek? Helyszin { get; set; }

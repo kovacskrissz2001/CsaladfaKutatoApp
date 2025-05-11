@@ -55,7 +55,7 @@
         <!-- Jobb oldali mezők -->
         <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="0,40,0,0" Grid.RowSpan="2" Width="369">
             <TextBox x:Name="AzonositoTextBox" Width="200" controls:TextBoxHelper.Watermark="Felhasználónév" Margin="10,0,0,5" HorizontalAlignment="Left" TextChanged="Azonosito_SzovegValtozas"/>
-            <TextBlock x:Name="HibaUzenetAzonosito" Foreground="Red" Margin="10,0,0,5"/>
+            <TextBlock x:Name="HibaUzenetAzonosito" Foreground="Red" Margin="10,0,0,5" />
             <TextBox x:Name="EmailTextBox" Width="200" controls:TextBoxHelper.Watermark="E-mail cím" HorizontalAlignment="Left" Margin="10,0,0,5" TextChanged="Email_SzovegValtozas"/>
             <TextBlock x:Name="HibaUzenetEmail" Foreground="Red" Margin="10,0,0,5"/>
             <Grid Margin="10,0,130,5">

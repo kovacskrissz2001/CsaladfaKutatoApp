@@ -24,7 +24,7 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" FontWeight="Bold" Text="Fotók és történet oldal" HorizontalAlignment="Center" FontSize="20"/>
         <WrapPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">
             <Button   Click="Torol_Click" HorizontalAlignment="Right" Content="Törlés" Margin="0,5,10,0" Width="74"/>
-            <Button   Click="Vissza_Click" HorizontalAlignment="Right" Content="Vissza" Margin="0,5,10,0" Width="73"/>
+            <Button   Click="Vissza_Click" HorizontalAlignment="Right" Content="Főoldal" Margin="0,5,10,0" Width="73"/>
         </WrapPanel>
 
         <!--Képek oszlopa-->

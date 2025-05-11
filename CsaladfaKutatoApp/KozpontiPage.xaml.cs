@@ -43,6 +43,7 @@ namespace CsaladfaKutatoApp
         public RajzoltSzemely LegutobbKijeloltSzemely { get; set; }
         public List<RajzoltSzemely> RajzoltSzemelyek;
         private Dictionary<int, Border> szemelyBorderDictionary = new Dictionary<int, Border>();
+        int? felhasznaloId = ((MainWindow)System.Windows.Application.Current.MainWindow).BejelentkezettFelhasznaloId;
         private Dictionary<int, int> GeneracioSzintek = new();
         private Dictionary<int, int> partnerMapNoknek = new();
         private Dictionary<int, int> partnerMapFerfiaknak = new();
@@ -77,9 +78,11 @@ namespace CsaladfaKutatoApp
 
             MegjelenitCsaladfat();
 
-            //frissítünk a profilkép miatt
+            //frissítünk a profilkép miatt, az legutóbb hozzáadott személy profilképje jelenik meg vagy a sablon
             KezdoTartalomControl frissitettOldal = new KezdoTartalomControl(this, _context);
+            frissitettOldal.DataContext = this.LegutobbKijeloltSzemely;
             frissitettOldal.BetoltSzemelyKepet();
+            frissitettOldal.ToltsdBeSzemelyAdatokatListViewhoz();
             TartalomValto.Content = frissitettOldal;
 
         }
@@ -101,6 +104,52 @@ namespace CsaladfaKutatoApp
                 MessageBox.Show("Mentés kész: " + saveDialog.FileName);
             }
         }
+
+
+        private void Segitseg_Click(object sender, RoutedEventArgs e)
+        {
+
+            // Mindig az IsOpen állapotból indulunk ki
+            bool jelenlegNyitva = BuborekPopup.IsOpen;
+
+            // Ha nyitva van, zárd be
+            if (jelenlegNyitva)
+            {
+                BuborekPopup.IsOpen = false;
+            }
+            else
+            {
+                // Nyitás előtt biztosítsd, hogy tényleg bezárt állapotból indulunk
+                BuborekPopup.IsOpen = true;
+                BuborekPopup.StaysOpen = true;
+            }
+
+            PopupUnezet.Text = "A menüsávban megjelenő gombok közül az Új családfa gombbal lehetséges teljesen elölről kezdeni egy másik családfát, kitörölve ezzel a régit. " +
+                "Az Exportálás png gombbal képeket készíthetünk png formátumba exportálva a családfa aktuális állapotáról. " +
+                "A Kijelentkezés gombbal lehetőség van kilépni az aktuális fiókból és bejelentkezni egy másikba. "+
+                "A Fiók törlése gomb törli az aktuális fiókot és a hozzá tartozó e-mail címet, felhasználó nevet és a jelszót is. "+
+                "A jobb oldali panelen láthatók az aktuálisan kijelölt személy adatai és a Kapcsolat létrehozása felirat alatti lenyíló lista segítségével "+
+                "lehetőség van az aktuálisan kijeölt személyhez családtagot adni. "+
+                "A lenyíló listában ki kell választani, hogy milyen családtagot szeretnénk hozzáadni az adott személyhez. "+
+                "A megjelenő elemek közül rá kell kattintani a megfelelőre és kitölteni a jobb oldalon megjelenő családtag hozzáadása oldal mezőit. "+
+                "A kitöltés után rá kell nyomni a Hozzáadás gombra és megjelenik az új családtag a családfában. "+
+                "A családfát ezzek a módszerrel lépésről lépésre lehet kialakítani, így a felhasználó elkészítheti apránként a saját családfáját.";
+
+        }
+
+        private void Panel_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Mindig az IsOpen állapotból indulunk ki
+            bool jelenlegNyitva = BuborekPopup.IsOpen;
+
+            if (jelenlegNyitva && !BuborekPopup.IsMouseOver && !InfoGomb.IsMouseOver)
+            {
+                BuborekPopup.StaysOpen = false;
+
+            }
+        }
+
+
 
         private void MentsCanvasKepbe(Canvas vaszon, string fajlNev)
         {
@@ -358,19 +407,20 @@ namespace CsaladfaKutatoApp
             // Aktuális KezdoTartalomControl elérése
             if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
             {
+                aktivTartalom = new KezdoTartalomControl(this, _context);
                 aktivTartalom.DataContext = szemely;
-                
+                aktivTartalom.BetoltSzemelyKepet();
+                aktivTartalom.ToltsdBeSzemelyAdatokatListViewhoz();
+                TartalomValto.Content = aktivTartalom;
             }
 
             if (TartalomValto.Content is KapcsolodoSzemelyLetrehozControl aktivTartalom2)
             {
                 if (LegutobbiKapcsolatTipus != "")
                 {
-                    //KezdoTartalomControl kezdoTartalom = new KezdoTartalomControl(this, _context);
-                    aktivTartalom2 = new KapcsolodoSzemelyLetrehozControl(this, _context, LegutobbiKapcsolatTipus, LegutobbKijeloltSzemely);
+                    aktivTartalom2 = new KapcsolodoSzemelyLetrehozControl(this, _context, LegutobbiKapcsolatTipus);
                     aktivTartalom2.DataContext = szemely;
                     aktivTartalom2.KapcsolatTipusBeallitas(LegutobbiKapcsolatTipus);
-
                     TartalomValto.Content = aktivTartalom2;
                 }
                 
@@ -379,6 +429,13 @@ namespace CsaladfaKutatoApp
             if (TartalomValto.Content is SzemelyKapcsolataiControl aktivTartalom3)
             {
                 aktivTartalom3.DataContext = szemely;
+            }
+
+            if (TartalomValto.Content is SzemelySzerkeszteseControl aktivTartalom4)
+            {
+                aktivTartalom4 = new SzemelySzerkeszteseControl(this, _context);
+                aktivTartalom4.DataContext = szemely;
+                TartalomValto.Content = aktivTartalom4;
             }
         }
 
@@ -1109,7 +1166,7 @@ namespace CsaladfaKutatoApp
                                     // Aktuális KezdoTartalomControl elérése
                                     if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
                                     {
-                                        aktivTartalom.DataContext = rajzoltszemely;
+                                        aktivTartalom.DataContext = LegutobbKijeloltSzemely;
                                     }
                                 }
                             }
@@ -1132,7 +1189,7 @@ namespace CsaladfaKutatoApp
                                     // Aktuális KezdoTartalomControl elérése
                                     if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
                                     {
-                                        aktivTartalom.DataContext = rajzoltszemely;
+                                        aktivTartalom.DataContext = LegutobbKijeloltSzemely;
                                     }
                                 }
 
@@ -1172,7 +1229,7 @@ namespace CsaladfaKutatoApp
                                         // Aktuális KezdoTartalomControl elérése
                                         if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
                                         {
-                                            aktivTartalom.DataContext = rajzoltszemely;
+                                            aktivTartalom.DataContext = LegutobbKijeloltSzemely;
                                         }
                                     }
                                     if (rajzoltszemely.GyermekekSzama != 0)//neki is lehetnek gyerekei
@@ -1254,7 +1311,7 @@ namespace CsaladfaKutatoApp
                                     // Aktuális KezdoTartalomControl elérése
                                     if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
                                     {
-                                        aktivTartalom.DataContext = rajzoltszemely;
+                                        aktivTartalom.DataContext = LegutobbKijeloltSzemely;
                                     }
                                 }
                             }
@@ -1279,7 +1336,7 @@ namespace CsaladfaKutatoApp
                                     // Aktuális KezdoTartalomControl elérése
                                     if (TartalomValto.Content is KezdoTartalomControl aktivTartalom)
                                     {
-                                        aktivTartalom.DataContext = rajzoltszemely;
+                                        aktivTartalom.DataContext = LegutobbKijeloltSzemely;
                                     }
                             }
                             
@@ -1503,6 +1560,113 @@ namespace CsaladfaKutatoApp
                 // Navigálás a BejelentkezesPage oldalra.
                 ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(new BejelentkezesPage(_context));
             }
+
+        private void UjCsaladfa_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if (felhasznaloId == null)
+            {
+                MessageBox.Show("Hiba: Nem található bejelentkezett felhasználó.");
+                return;
+            }
+
+            // Megerősítő kérdés
+            var result = MessageBox.Show(
+                "Biztosan új családfát szeretnél készíteni? Minden eddigi adatod a családfából törlődni fog.",
+                "Megerősítés szükséges",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return; // Felhasználó mégsem akar törölni
+            }
+
+
+            var szemelyek = _context.Szemelyeks.Where(s => s.FelhasznaloId == felhasznaloId).ToList();
+            var szemelyIds = szemelyek.Select(s => s.SzemelyId).ToList();
+            var helyszinIds = szemelyek.Select(s => s.HelyszinId).Where(h => h != null).Distinct().ToList();
+
+            var kapcsolatok = _context.Kapcsolatoks
+                .Where(k => szemelyIds.Contains(k.SzemelyId) || szemelyIds.Contains(k.KapcsolodoSzemelyId));
+            _context.Kapcsolatoks.RemoveRange(kapcsolatok);
+
+            var tortenetek = _context.Torteneteks.Where(t => szemelyIds.Contains(t.SzemelyId));
+            _context.Torteneteks.RemoveRange(tortenetek);
+
+            var fotok = _context.Fotoks.Where(f => szemelyIds.Contains(f.SzemelyId));
+            _context.Fotoks.RemoveRange(fotok);
+
+            _context.Szemelyeks.RemoveRange(szemelyek);
+
+            var helyszinek = _context.Helyszineks
+                .Where(h => helyszinIds.Contains(h.HelyszinId));
+            _context.Helyszineks.RemoveRange(helyszinek);
+
+            _context.SaveChanges();
+
+            var ujOldal = new ElsoCsaladtagHozzaadPage(_context);
+            ((MainWindow)System.Windows.Application.Current.MainWindow).MainFrame.Navigate(ujOldal);
         }
-    
+
+
+        private void FiokTorlese_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if (felhasznaloId == null)
+            {
+                MessageBox.Show("Hiba: Nem található bejelentkezett felhasználó.");
+                return;
+            }
+
+            var megerosites = MessageBox.Show(
+                "Biztosan törölni szeretnéd a fiókodat? Minden adatod véglegesen törlődik.",
+                "Fiók törlése megerősítés",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+
+            if (megerosites != MessageBoxResult.Yes)
+                return;
+
+
+
+            //Személyek és kapcsolódó adatok törlése
+            var szemelyek = _context.Szemelyeks.Where(s => s.FelhasznaloId == felhasznaloId).ToList();
+            var szemelyIds = szemelyek.Select(s => s.SzemelyId).ToList();
+            var helyszinIds = szemelyek.Select(s => s.HelyszinId).Where(h => h != null).Distinct().ToList();
+
+            var kapcsolatok = _context.Kapcsolatoks
+                .Where(k => szemelyIds.Contains(k.SzemelyId) || szemelyIds.Contains(k.KapcsolodoSzemelyId));
+            _context.Kapcsolatoks.RemoveRange(kapcsolatok);
+
+            var tortenetek = _context.Torteneteks.Where(t => szemelyIds.Contains(t.SzemelyId));
+            _context.Torteneteks.RemoveRange(tortenetek);
+
+            var fotok = _context.Fotoks.Where(f => szemelyIds.Contains(f.SzemelyId));
+            _context.Fotoks.RemoveRange(fotok);
+
+            _context.Szemelyeks.RemoveRange(szemelyek);
+
+            var helyszinek = _context.Helyszineks
+                .Where(h => helyszinIds.Contains(h.HelyszinId));
+            _context.Helyszineks.RemoveRange(helyszinek);
+
+            //Végül a felhasználó törlése
+            var felhasznalo = _context.Felhasznaloks.FirstOrDefault(f => f.FelhasznaloId == felhasznaloId);
+            if (felhasznalo != null)
+                _context.Felhasznaloks.Remove(felhasznalo);
+
+            _context.SaveChanges();
+
+            MessageBox.Show("A fiók és az összes hozzá tartozó adat sikeresen törölve lett.", "Fiók törölve", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            //Navigáció vissza a bejelentkezési oldalra
+            ((MainWindow)Application.Current.MainWindow).BejelentkezettFelhasznaloId = null;
+            var loginPage = new BejelentkezesPage(_context);
+            ((MainWindow)Application.Current.MainWindow).MainFrame.Navigate(loginPage);
+        }
+
+    }
+
 }

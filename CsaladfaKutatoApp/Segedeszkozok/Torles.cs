@@ -60,7 +60,6 @@ namespace CsaladfaKutatoApp.Segedeszkozok
                             .Include(sz => sz.KapcsolatokSzemelies)
                             .Include(sz => sz.KapcsolatokKapcsolodoSzemelies)
                             .Include(sz => sz.Fotoks)
-                            .Include(sz => sz.Forrasoks)
                             .Include(sz => sz.Torteneteks)
                             .FirstOrDefault(sz => sz.SzemelyId == kijeloltSzemely.Azonosito);
 
@@ -77,8 +76,7 @@ namespace CsaladfaKutatoApp.Segedeszkozok
                             }
                             context.Fotoks.RemoveRange(szemely.Fotoks);
 
-                            // További kapcsolódó rekordok törlése
-                            context.Forrasoks.RemoveRange(szemely.Forrasoks);
+                            // Történet rekordok törlése
                             context.Torteneteks.RemoveRange(szemely.Torteneteks);
 
                             // Ha szükséges, ellenőrizzük a Helyszin törlését (csak akkor, ha nem tartozik más személyhez)

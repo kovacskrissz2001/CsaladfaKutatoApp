@@ -51,9 +51,6 @@
     <Resource Include="Images\csaladfa_alkalmazas_icon.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Images\pexels-tree.jpg">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Images\tree.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
